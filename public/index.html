@@ -299,109 +299,107 @@
     color: var(--text);
   }
 
-  /* Calendar section */
-  .calendar-section { margin-bottom: 36px; }
+  /* Calendar section — compact card */
+  .calendar-section { margin-bottom: 28px; }
 
-  .calendar-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-    padding: 0 4px;
+  .calendar-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(64,38,45,0.06);
+    overflow: hidden;
   }
 
-  .calendar-header .section-title { font-size: 18px; }
+  .calendar-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .calendar-card-header .cal-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
 
   .calendar-legend {
     display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-left: auto;
-    font-size: 11px;
+    gap: 10px;
+    font-size: 10px;
     color: var(--text-secondary);
   }
 
   .calendar-legend-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
   }
-
-  .calendar-day-group { margin-bottom: 14px; }
-
-  .calendar-day-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    padding: 0 4px;
-    margin-bottom: 6px;
-  }
-
-  .calendar-event {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 1px 3px rgba(64,38,45,0.06);
-    transition: background 0.15s;
-  }
-
-  .calendar-event:hover { background: var(--card-hover); }
-
-  /* Pastel calendar colors — left border + dot */
-  .cal-arbete { border-left-color: #8ed4a6; }
-  .cal-privat { border-left-color: #89b4e8; }
-  .cal-familj { border-left-color: #c9a0c9; }
-  .cal-evolan { border-left-color: #f0a868; }
-  .cal-exchange { border-left-color: #c4a882; }
-
-  .dot-arbete { background: #8ed4a6; }
-  .dot-privat { background: #89b4e8; }
-  .dot-familj { background: #c9a0c9; }
-  .dot-evolan { background: #f0a868; }
-  .dot-exchange { background: #c4a882; }
 
   .calendar-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
   }
 
-  .calendar-time {
+  .dot-arbete { background: #8ed4a6; }   /* grönt — Arbete */
+  .dot-privat { background: #89b4e8; }   /* blått — Privat */
+  .dot-familj { background: #c9a0c9; }   /* lila — Familj */
+  .dot-evolan { background: #f0a868; }   /* orange — Evolan */
+  .dot-exchange { background: #c4a882; } /* brunt — Teams */
+
+  .calendar-day-group { padding: 0 16px; }
+  .calendar-day-group:last-child .calendar-event:last-child { border-bottom: none; }
+
+  .calendar-day-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 0 2px;
+  }
+
+  .calendar-event {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(230,206,216,0.4);
     font-size: 13px;
+  }
+
+  .calendar-time {
+    font-size: 12px;
     font-weight: 600;
     color: var(--text);
-    min-width: 46px;
+    min-width: 40px;
     flex-shrink: 0;
   }
 
   .calendar-time.all-day {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     color: var(--text-secondary);
   }
 
   .calendar-title {
-    font-size: 14px;
-    color: var(--text);
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--text);
   }
 
   .calendar-location {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-secondary);
-    max-width: 160px;
+    max-width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -409,12 +407,9 @@
 
   .calendar-loading, .calendar-error {
     text-align: center;
-    padding: 24px;
+    padding: 16px;
     color: var(--text-secondary);
-    font-size: 14px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    font-size: 13px;
   }
 
   @media (max-width: 600px) {
@@ -427,9 +422,8 @@
     .stat-value { font-size: 22px; }
     .card { padding: 14px; }
     .card-subject { white-space: normal; }
-    .calendar-event { flex-wrap: wrap; gap: 6px; }
-    .calendar-legend { margin-left: 0; margin-top: 8px; }
-    .calendar-header { flex-wrap: wrap; }
+    .calendar-card-header { flex-wrap: wrap; gap: 6px; }
+    .calendar-legend { margin-left: 0; }
     .calendar-location { display: none; }
   }
 </style>
@@ -479,19 +473,20 @@
 
   <!-- KALENDER -->
   <div class="calendar-section" id="calendar-section">
-    <div class="calendar-header">
-      <div class="section-icon" style="background: rgba(196,106,138,0.15); color: var(--accent);">&#128197;</div>
-      <div class="section-title">Denna vecka</div>
-      <div class="calendar-legend">
-        <div class="calendar-legend-item"><div class="calendar-dot dot-arbete"></div>Arbete</div>
-        <div class="calendar-legend-item"><div class="calendar-dot dot-privat"></div>Privat</div>
-        <div class="calendar-legend-item"><div class="calendar-dot dot-familj"></div>Familj</div>
-        <div class="calendar-legend-item"><div class="calendar-dot dot-evolan"></div>Evolan</div>
-        <div class="calendar-legend-item"><div class="calendar-dot dot-exchange"></div>Teams</div>
+    <div class="calendar-card">
+      <div class="calendar-card-header">
+        <div class="cal-title">&#128197; Denna vecka</div>
+        <div class="calendar-legend">
+          <div class="calendar-legend-item"><div class="calendar-dot dot-arbete"></div>Arbete</div>
+          <div class="calendar-legend-item"><div class="calendar-dot dot-privat"></div>Privat</div>
+          <div class="calendar-legend-item"><div class="calendar-dot dot-familj"></div>Familj</div>
+          <div class="calendar-legend-item"><div class="calendar-dot dot-evolan"></div>Evolan</div>
+          <div class="calendar-legend-item"><div class="calendar-dot dot-exchange"></div>Teams</div>
+        </div>
       </div>
-    </div>
-    <div id="calendar-events">
-      <div class="calendar-loading">Laddar kalender...</div>
+      <div id="calendar-events">
+        <div class="calendar-loading">Laddar kalender...</div>
+      </div>
     </div>
   </div>
 
@@ -1822,7 +1817,7 @@
             : new Date(ev.start).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
           const loc = ev.location ? '<div class="calendar-location">' + ev.location.split('\n')[0] + '</div>' : '';
 
-          html += '<div class="calendar-event cal-' + ev.calendar + '">';
+          html += '<div class="calendar-event">';
           html += '<div class="calendar-dot dot-' + ev.calendar + '"></div>';
           html += '<div class="calendar-time' + (ev.allDay ? ' all-day' : '') + '">' + time + '</div>';
           html += '<div class="calendar-title">' + ev.title + '</div>';
