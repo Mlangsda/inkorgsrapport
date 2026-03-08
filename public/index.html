@@ -1377,7 +1377,11 @@
     "hakan-forhandsavtal-helix": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkgG8AAA=",
     "polisen-parkeringsanmarkning-beslut": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkQ8BAAA=",
     "hakan-alzheimer-meddelande": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkZcPAAA=",
-    "m5-kokscenter-oscar-properties": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRGFAAA="
+    "m5-kokscenter-oscar-properties": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRGFAAA=",
+    "talent-christina": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAQF0J1hAADKcBpiwgLVS4zTwdnFAhlvAARCOFJ-AAA=",
+    "scalex-enkat1": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAASZKSDlAADKcBpiwgLVS4zTwdnFAhlvAASs0q9cAAA=",
+    "bolagsverket-forelaggande": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAGdo6cMAADKcBpiwgLVS4zTwdnFAhlvAAQ78VNlAAA=",
+    "parkering-ogla": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUszAADKcBpiwgLVS4zTwdnFAhlvAAT6xGRZAAA="
   };
 
   function getChecked() {
@@ -1489,7 +1493,11 @@
     "hakan-forhandsavtal-helix",
     "polisen-parkeringsanmarkning-beslut",
     "hakan-alzheimer-meddelande",
-    "m5-kokscenter-oscar-properties"
+    "m5-kokscenter-oscar-properties",
+    "talent-christina",
+    "scalex-enkat1",
+    "bolagsverket-forelaggande",
+    "parkering-ogla"
   ];
 
   // Migrera förbockade till localStorage om de saknas
@@ -1573,28 +1581,34 @@
     const sections = document.querySelectorAll('.section');
 
     if (filter === 'alla') {
-      // Visa alla sektioner och kort
+      // Visa alla sektioner och kort (utom expired)
       sections.forEach(s => {
         s.classList.remove('hidden');
-        s.querySelectorAll('.card').forEach(c => c.style.display = '');
+        s.querySelectorAll('.card').forEach(c => {
+          c.style.display = c.dataset.expired === 'true' ? 'none' : '';
+        });
       });
     } else if (filter === 'affar') {
-      // Visa bara Affär/Kund-sektionen
+      // Visa bara Affär/Kund-sektionen (utom expired)
       sections.forEach(s => {
         if (s.dataset.category === 'affar') {
           s.classList.remove('hidden');
-          s.querySelectorAll('.card').forEach(c => c.style.display = '');
+          s.querySelectorAll('.card').forEach(c => {
+            c.style.display = c.dataset.expired === 'true' ? 'none' : '';
+          });
         } else {
           s.classList.add('hidden');
         }
       });
     } else if (filter === 'hog') {
-      // Visa bara kort med hög prioritet (röd prick)
+      // Visa bara kort med hög prioritet (utom expired)
       sections.forEach(s => {
         s.classList.remove('hidden');
         let visibleCards = 0;
         s.querySelectorAll('.card').forEach(c => {
-          if (c.querySelector('.priority-high')) {
+          if (c.dataset.expired === 'true') {
+            c.style.display = 'none';
+          } else if (c.querySelector('.priority-high')) {
             c.style.display = '';
             visibleCards++;
           } else {
@@ -1604,12 +1618,12 @@
         if (visibleCards === 0) s.classList.add('hidden');
       });
     } else if (filter === 'kvar') {
-      // Visa bara obesvarade (ej ibockade)
+      // Visa bara obesvarade (ej ibockade, ej expired)
       sections.forEach(s => {
         s.classList.remove('hidden');
         let visibleCards = 0;
         s.querySelectorAll('.card').forEach(c => {
-          if (c.classList.contains('checked')) {
+          if (c.dataset.expired === 'true' || c.classList.contains('checked')) {
             c.style.display = 'none';
           } else {
             c.style.display = '';
