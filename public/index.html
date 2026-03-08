@@ -346,15 +346,18 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
+    max-width: 100%;
   }
 
   .calendar-day-box {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 10px 8px 8px;
+    padding: 10px 7px 8px;
     min-height: 80px;
+    min-width: 0;
     box-shadow: 0 1px 3px rgba(64,38,45,0.04);
+    overflow: hidden;
   }
 
   .calendar-day-box.is-today {
