@@ -1,0 +1,24 @@
+{
+  "name": "inkorgsrapport",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mlangsda/inkorgsrapport.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mlangsda/inkorgsrapport/issues"
+  },
+  "homepage": "https://github.com/Mlangsda/inkorgsrapport#readme",
+  "dependencies": {
+    "@azure/msal-node": "^5.0.6"
+  }
+}
