@@ -18,8 +18,15 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // Use start of today in Europe/Stockholm timezone (handles DST)
   const now = new Date();
-  const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const stockholmDate = now.toLocaleDateString('sv-SE', { timeZone: 'Europe/Stockholm' });
+  const offsetPart = new Intl.DateTimeFormat('en', {
+    timeZone: 'Europe/Stockholm', timeZoneName: 'longOffset'
+  }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
+  const offset = offsetPart.replace('GMT', '') || '+00:00';
+  const startOfToday = new Date(stockholmDate + 'T00:00:00' + offset);
+  const future = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);
   const events = [];
   const errors = [];
 
@@ -36,7 +43,7 @@ export default async function handler(req, res) {
       Object.entries(GOOGLE_CALENDARS).map(async ([name, calId]) => {
         const result = await calendar.events.list({
           calendarId: calId,
-          timeMin: now.toISOString(),
+          timeMin: startOfToday.toISOString(),
           timeMax: future.toISOString(),
           singleEvents: true,
           orderBy: 'startTime',
@@ -80,18 +87,25 @@ export default async function handler(req, res) {
       scopes: ['https://graph.microsoft.com/.default'],
     });
 
-    const url = `https://graph.microsoft.com/v1.0/users/${USER_EMAIL}/calendarView?startDateTime=${now.toISOString()}&endDateTime=${future.toISOString()}&$select=subject,start,end,isAllDay,location&$orderby=start/dateTime&$top=50`;
+    const url = `https://graph.microsoft.com/v1.0/users/${USER_EMAIL}/calendarView?startDateTime=${startOfToday.toISOString()}&endDateTime=${future.toISOString()}&$select=subject,start,end,isAllDay,location&$orderby=start/dateTime&$top=50`;
     const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${tokenResult.accessToken}` },
+      headers: {
+        Authorization: `Bearer ${tokenResult.accessToken}`,
+        'Prefer': 'outlook.timezone="Europe/Stockholm"',
+      },
     });
 
     if (response.ok) {
       const data = await response.json();
       for (const e of (data.value || [])) {
+        // With Europe/Stockholm timezone header, dateTime is in local time
+        // Parse as local time by appending Stockholm offset
+        const startDt = e.start.dateTime.replace(/\.0+$/, '');
+        const endDt = e.end.dateTime.replace(/\.0+$/, '');
         events.push({
           title: e.subject || '(Ingen rubrik)',
-          start: e.start.dateTime + 'Z',
-          end: e.end.dateTime + 'Z',
+          start: startDt,
+          end: endDt,
           allDay: e.isAllDay,
           calendar: 'exchange',
           location: e.location?.displayName || null,
