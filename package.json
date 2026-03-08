@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Mlangsda/inkorgsrapport#readme",
   "dependencies": {
-    "@azure/msal-node": "^5.0.6"
+    "@azure/msal-node": "^5.0.6",
+    "googleapis": "^171.4.0"
   }
 }

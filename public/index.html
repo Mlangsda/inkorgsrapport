@@ -299,6 +299,124 @@
     color: var(--text);
   }
 
+  /* Calendar section */
+  .calendar-section { margin-bottom: 36px; }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 0 4px;
+  }
+
+  .calendar-header .section-title { font-size: 18px; }
+
+  .calendar-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .calendar-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .calendar-day-group { margin-bottom: 14px; }
+
+  .calendar-day-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 0 4px;
+    margin-bottom: 6px;
+  }
+
+  .calendar-event {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(64,38,45,0.06);
+    transition: background 0.15s;
+  }
+
+  .calendar-event:hover { background: var(--card-hover); }
+
+  /* Pastel calendar colors — left border + dot */
+  .cal-arbete { border-left-color: #89b4e8; }
+  .cal-privat { border-left-color: #c9a0c9; }
+  .cal-familj { border-left-color: #8ed4a6; }
+  .cal-evolan { border-left-color: #edb86a; }
+  .cal-exchange { border-left-color: #7ab8e0; }
+
+  .dot-arbete { background: #89b4e8; }
+  .dot-privat { background: #c9a0c9; }
+  .dot-familj { background: #8ed4a6; }
+  .dot-evolan { background: #edb86a; }
+  .dot-exchange { background: #7ab8e0; }
+
+  .calendar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .calendar-time {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 46px;
+    flex-shrink: 0;
+  }
+
+  .calendar-time.all-day {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .calendar-title {
+    font-size: 14px;
+    color: var(--text);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .calendar-location {
+    font-size: 11px;
+    color: var(--text-secondary);
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .calendar-loading, .calendar-error {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
   @media (max-width: 600px) {
     .container { padding: 20px 12px 60px; }
     header h1 { font-size: 24px; }
@@ -309,6 +427,10 @@
     .stat-value { font-size: 22px; }
     .card { padding: 14px; }
     .card-subject { white-space: normal; }
+    .calendar-event { flex-wrap: wrap; gap: 6px; }
+    .calendar-legend { margin-left: 0; margin-top: 8px; }
+    .calendar-header { flex-wrap: wrap; }
+    .calendar-location { display: none; }
   }
 </style>
 </head>
@@ -352,6 +474,24 @@
     <div class="stat" data-filter="kvar" onclick="filterSections(this, 'kvar')">
       <div class="stat-value" id="remaining-count" style="color: var(--red)">57</div>
       <div class="stat-label">Kvar att hantera</div>
+    </div>
+  </div>
+
+  <!-- KALENDER -->
+  <div class="calendar-section" id="calendar-section">
+    <div class="calendar-header">
+      <div class="section-icon" style="background: rgba(196,106,138,0.15); color: var(--accent);">&#128197;</div>
+      <div class="section-title">Denna vecka</div>
+      <div class="calendar-legend">
+        <div class="calendar-legend-item"><div class="calendar-dot dot-arbete"></div>Arbete</div>
+        <div class="calendar-legend-item"><div class="calendar-dot dot-privat"></div>Privat</div>
+        <div class="calendar-legend-item"><div class="calendar-dot dot-familj"></div>Familj</div>
+        <div class="calendar-legend-item"><div class="calendar-dot dot-evolan"></div>Evolan</div>
+        <div class="calendar-legend-item"><div class="calendar-dot dot-exchange"></div>Teams</div>
+      </div>
+    </div>
+    <div id="calendar-events">
+      <div class="calendar-loading">Laddar kalender...</div>
     </div>
   </div>
 
@@ -1636,6 +1776,67 @@
   };
 
   updateStats();
+
+  // --- KALENDER ---
+  (async function loadCalendar() {
+    const container = document.getElementById('calendar-events');
+    try {
+      const resp = await fetch('/api/calendar');
+      if (!resp.ok) throw new Error('API error ' + resp.status);
+      const { events } = await resp.json();
+
+      if (!events || !events.length) {
+        container.innerHTML = '<div class="calendar-loading">Inga händelser denna vecka</div>';
+        return;
+      }
+
+      const dayNames = ['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
+      const monthNames = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+
+      // Group by day
+      const days = {};
+      for (const ev of events) {
+        const d = new Date(ev.start);
+        const key = d.toISOString().slice(0, 10);
+        if (!days[key]) days[key] = [];
+        days[key].push(ev);
+      }
+
+      const today = new Date().toISOString().slice(0, 10);
+      const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+
+      let html = '';
+      for (const [dateKey, dayEvents] of Object.entries(days)) {
+        const d = new Date(dateKey + 'T12:00:00');
+        let label;
+        if (dateKey === today) label = 'Idag';
+        else if (dateKey === tomorrow) label = 'Imorgon';
+        else label = dayNames[d.getDay()] + ' ' + d.getDate() + ' ' + monthNames[d.getMonth()];
+
+        html += '<div class="calendar-day-group">';
+        html += '<div class="calendar-day-label">' + label + '</div>';
+
+        for (const ev of dayEvents) {
+          const time = ev.allDay
+            ? 'Heldag'
+            : new Date(ev.start).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+          const loc = ev.location ? '<div class="calendar-location">' + ev.location.split('\n')[0] + '</div>' : '';
+
+          html += '<div class="calendar-event cal-' + ev.calendar + '">';
+          html += '<div class="calendar-dot dot-' + ev.calendar + '"></div>';
+          html += '<div class="calendar-time' + (ev.allDay ? ' all-day' : '') + '">' + time + '</div>';
+          html += '<div class="calendar-title">' + ev.title + '</div>';
+          html += loc;
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    } catch (err) {
+      container.innerHTML = '<div class="calendar-error">Kunde inte ladda kalendern</div>';
+    }
+  })();
 })();
 </script>
 </body>

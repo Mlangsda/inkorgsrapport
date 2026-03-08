@@ -1,0 +1,131 @@
+import { google } from 'googleapis';
+import { ConfidentialClientApplication } from '@azure/msal-node';
+
+const USER_EMAIL = 'marzena@marzenalangsdale.com';
+
+const GOOGLE_CALENDARS = {
+  arbete: 'rd77r3g1nq0m48g3vntp3u1uhk@group.calendar.google.com',
+  privat: 'aout8htgc2m1k9mjsiae3vi7mk@group.calendar.google.com',
+  familj: 'g72eeu1f0hk0gbe7be9th52h7k@group.calendar.google.com',
+  evolan: 'rhk7ggl5tvgvp8qrf3k3ok3o58@group.calendar.google.com',
+};
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const now = new Date();
+  const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const events = [];
+  const errors = [];
+
+  // 1. Google Calendars — fetch all in parallel
+  try {
+    const credentials = JSON.parse(process.env.GOOGLE_CALENDAR_KEY);
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+    });
+    const calendar = google.calendar({ version: 'v3', auth });
+
+    const googleResults = await Promise.allSettled(
+      Object.entries(GOOGLE_CALENDARS).map(async ([name, calId]) => {
+        const result = await calendar.events.list({
+          calendarId: calId,
+          timeMin: now.toISOString(),
+          timeMax: future.toISOString(),
+          singleEvents: true,
+          orderBy: 'startTime',
+          maxResults: 30,
+        });
+        return { name, items: result.data.items || [] };
+      })
+    );
+
+    for (const result of googleResults) {
+      if (result.status === 'fulfilled') {
+        for (const e of result.value.items) {
+          events.push({
+            title: e.summary || '(Ingen rubrik)',
+            start: e.start.dateTime || e.start.date,
+            end: e.end.dateTime || e.end.date,
+            allDay: !e.start.dateTime,
+            calendar: result.value.name,
+            location: e.location || null,
+          });
+        }
+      } else {
+        errors.push(`Google: ${result.reason.message}`);
+      }
+    }
+  } catch (err) {
+    errors.push(`Google auth: ${err.message}`);
+  }
+
+  // 2. Exchange Calendar
+  try {
+    const cca = new ConfidentialClientApplication({
+      auth: {
+        clientId: process.env.MS_CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${process.env.MS_TENANT_ID}`,
+        clientSecret: process.env.MS_CLIENT_SECRET,
+      },
+    });
+
+    const tokenResult = await cca.acquireTokenByClientCredential({
+      scopes: ['https://graph.microsoft.com/.default'],
+    });
+
+    const url = `https://graph.microsoft.com/v1.0/users/${USER_EMAIL}/calendarView?startDateTime=${now.toISOString()}&endDateTime=${future.toISOString()}&$select=subject,start,end,isAllDay,location&$orderby=start/dateTime&$top=50`;
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${tokenResult.accessToken}` },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      for (const e of (data.value || [])) {
+        events.push({
+          title: e.subject || '(Ingen rubrik)',
+          start: e.start.dateTime + 'Z',
+          end: e.end.dateTime + 'Z',
+          allDay: e.isAllDay,
+          calendar: 'exchange',
+          location: e.location?.displayName || null,
+        });
+      }
+    } else {
+      errors.push(`Exchange: ${response.status}`);
+    }
+  } catch (err) {
+    errors.push(`Exchange: ${err.message}`);
+  }
+
+  // 3. Deduplicate (Google syncs to Exchange, so events appear twice)
+  // Keep Google version when title+start match within 2 minutes
+  const deduped = [];
+  const googleEvents = events.filter(e => e.calendar !== 'exchange');
+  const exchangeEvents = events.filter(e => e.calendar === 'exchange');
+
+  deduped.push(...googleEvents);
+
+  for (const ex of exchangeEvents) {
+    const exStart = new Date(ex.start).getTime();
+    const isDuplicate = googleEvents.some(g => {
+      const gStart = new Date(g.start).getTime();
+      return g.title.toLowerCase() === ex.title.toLowerCase()
+        && Math.abs(gStart - exStart) < 2 * 60 * 1000;
+    });
+    if (!isDuplicate) {
+      deduped.push(ex);
+    }
+  }
+
+  // 4. Sort by start time
+  deduped.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+  return res.status(200).json({ events: deduped, errors });
+}
