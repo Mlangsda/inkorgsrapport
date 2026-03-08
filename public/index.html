@@ -1440,8 +1440,28 @@
     }
   }
 
-  // Restore state on load — dölj kort som bockats av för >7 dagar sedan
+  // Mejl som redan markerats som lästa i Exchange (verifierat via Graph API)
+  const PRE_CHECKED = [
+    "faktura-evolan-pharma",
+    "evolan-uk-ad-janine-draft",
+    "evolan-quote",
+    "evolan-kids-scripting",
+    "evolan-esim-banner",
+    "evolan-cleari-banners"
+  ];
+
+  // Migrera förbockade till localStorage om de saknas
   const checked = getChecked();
+  let migrated = false;
+  for (const id of PRE_CHECKED) {
+    if (!checked[id]) {
+      checked[id] = Date.now();
+      migrated = true;
+    }
+  }
+  if (migrated) saveChecked(checked);
+
+  // Restore state on load — dölj kort som bockats av för >7 dagar sedan
   document.querySelectorAll('.card').forEach(card => {
     const id = card.dataset.id;
     if (checked[id]) {
