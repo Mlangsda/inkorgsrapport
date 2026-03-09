@@ -3,6 +3,8 @@ import { ConfidentialClientApplication } from '@azure/msal-node';
 
 const USER_EMAIL = 'marzena@marzenalangsdale.com';
 
+const YOBEDOO_ICS_URL = 'https://outlook.office365.com/owa/calendar/7784fa426c2145ee866c3914d19bc670@yobedoo.com/2fa37a7a158349dca13ff5b5fd60a8307320543417251081616/calendar.ics';
+
 const GOOGLE_CALENDARS = {
   arbete: 'rd77r3g1nq0m48g3vntp3u1uhk@group.calendar.google.com',
   privat: 'aout8htgc2m1k9mjsiae3vi7mk@group.calendar.google.com',
@@ -118,17 +120,89 @@ export default async function handler(req, res) {
     errors.push(`Exchange: ${err.message}`);
   }
 
-  // 3. Deduplicate (Google syncs to Exchange, so events appear twice)
-  // Keep Google version when title+start match within 2 minutes
+  // 3. Yobedoo Calendar (public ICS feed)
+  try {
+    const icsResp = await fetch(YOBEDOO_ICS_URL, {
+      headers: { 'User-Agent': 'MLC-Calendar/1.0' },
+    });
+    if (icsResp.ok) {
+      const icsText = await icsResp.text();
+      // Parse VEVENT blocks from ICS
+      const vevents = icsText.split('BEGIN:VEVENT');
+      for (let i = 1; i < vevents.length; i++) {
+        const block = vevents[i].split('END:VEVENT')[0];
+        const get = (key) => {
+          const m = block.match(new RegExp('^' + key + '[^:]*:(.+)', 'm'));
+          return m ? m[1].trim() : null;
+        };
+
+        const summary = get('SUMMARY') || '(Ingen rubrik)';
+        const dtstart = get('DTSTART');
+        const dtend = get('DTEND');
+        if (!dtstart) continue;
+
+        // Parse ICS date formats: 20260313T140000 or with TZID
+        const parseIcsDate = (val) => {
+          // Strip any trailing \r
+          const clean = val.replace(/\r/g, '');
+          // Format: YYYYMMDD (all-day)
+          if (/^\d{8}$/.test(clean)) {
+            return { date: clean.slice(0,4)+'-'+clean.slice(4,6)+'-'+clean.slice(6,8), allDay: true };
+          }
+          // Format: YYYYMMDDTHHmmss or YYYYMMDDTHHmmssZ
+          const m = clean.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/);
+          if (m) {
+            const isUtc = clean.endsWith('Z');
+            const iso = `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}`;
+            if (isUtc) {
+              // Convert UTC to Stockholm local time
+              const d = new Date(iso + 'Z');
+              return { date: d.toISOString(), allDay: false };
+            }
+            // Already local time (TZID specified in ICS)
+            return { date: iso, allDay: false };
+          }
+          return null;
+        };
+
+        const startParsed = parseIcsDate(dtstart);
+        if (!startParsed) continue;
+
+        // Filter to our date range
+        const evDate = new Date(startParsed.date);
+        if (evDate < startOfToday || evDate > future) continue;
+
+        const endParsed = dtend ? parseIcsDate(dtend) : startParsed;
+
+        events.push({
+          title: summary,
+          start: startParsed.date,
+          end: endParsed ? endParsed.date : startParsed.date,
+          allDay: startParsed.allDay,
+          calendar: 'yobedoo',
+          location: get('LOCATION') || null,
+        });
+      }
+    } else {
+      errors.push(`Yobedoo ICS: ${icsResp.status}`);
+    }
+  } catch (err) {
+    errors.push(`Yobedoo ICS: ${err.message}`);
+  }
+
+  // 4. Deduplicate — keep primary source when title+start match within 2 min
+  // Priority: Google > Yobedoo > Exchange
   const deduped = [];
-  const googleEvents = events.filter(e => e.calendar !== 'exchange');
+  const primaryEvents = events.filter(e => e.calendar !== 'exchange' && e.calendar !== 'yobedoo');
+  const yobedooEvents = events.filter(e => e.calendar === 'yobedoo');
   const exchangeEvents = events.filter(e => e.calendar === 'exchange');
 
-  deduped.push(...googleEvents);
+  deduped.push(...primaryEvents);
+  deduped.push(...yobedooEvents);
 
   for (const ex of exchangeEvents) {
     const exStart = new Date(ex.start).getTime();
-    const isDuplicate = googleEvents.some(g => {
+    const isDuplicate = [...primaryEvents, ...yobedooEvents].some(g => {
       const gStart = new Date(g.start).getTime();
       return g.title.toLowerCase() === ex.title.toLowerCase()
         && Math.abs(gStart - exStart) < 2 * 60 * 1000;
