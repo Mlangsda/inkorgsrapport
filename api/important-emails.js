@@ -16,6 +16,25 @@ const JUNK_DOMAINS = [
   'postnord', 'dhl', 'ups.com', 'fedex.com',
   'booking.com', 'hotels.com', 'airbnb.com', 'sas.se', 'norwegian.com',
   'google.com', 'youtube.com', 'instagram.com', 'tiktok.com',
+  // Design/stock/SaaS-nyhetsbrev
+  'mockupcloud', 'creativemarket', 'envato', 'shutterstock', 'adobe.com',
+  'canva.com', 'figma.com', 'dribbble', 'behance', 'unsplash',
+  'freepik', 'pixabay', 'pexels', 'depositphotos', 'istockphoto',
+  'designmodo', 'designernews', 'smashingmagazine', 'css-tricks',
+  // Sociala / community
+  'medium.com', 'substack.com', 'patreon.com', 'eventbrite',
+  'slack.com', 'discord.com', 'notion.so', 'trello.com', 'asana.com',
+  // E-handel / prenumerationer
+  'amazon.', 'ebay.', 'wish.com', 'zalando', 'hm.com', 'ikea.com',
+  'apotea', 'matas.', 'kicks.se', 'lyko.', 'adlibris',
+  'wix.com', 'godaddy', 'namecheap', 'bluehost',
+  // Betalning / bank (automatiska notiser)
+  'nordea.', 'swedbank', 'handelsbanken', 'seb.se', 'avanza',
+  'collector.', 'billogram', 'fortnox.se',
+  // Övrigt
+  'typeform.com', 'surveymonkey', 'google-analytics', 'hotjar',
+  'intercom', 'zendesk', 'freshdesk', 'crisp.chat',
+  'mailgun', 'sendgrid', 'postmark', 'twilio',
 ];
 
 // Ämnesord som indikerar automatiska/oviktiga mejl
@@ -26,6 +45,20 @@ const JUNK_SUBJECTS = [
   'password reset', 'lösenord', 'verify your', 'verifiera',
   'notification', 'avisering', 'automatic reply', 'autosvar',
   'out of office', 'frånvaro',
+  // Marknadsföring / reklam
+  'new premium', 'free mockup', 'free template', 'free download',
+  'exclusive offer', 'limited time', 'special offer', 'discount',
+  'rabatt', 'erbjudande', '% off', 'sale ends', 'flash sale',
+  'weekly digest', 'monthly digest', 'daily digest',
+  'top picks', 'trending', 'recommended for you',
+  'new collection', 'new arrivals', 'just launched',
+  'webinar', 'watch now', 'register now', 'sign up',
+  'confirm your email', 'bekräfta din e-post',
+  'your subscription', 'din prenumeration',
+  'security alert', 'sign-in', 'new sign-in',
+  'delivery notification', 'package delivered',
+  'order confirmation', 'orderbekräftelse',
+  'booking confirmation', 'bokningsbekräftelse',
 ];
 
 // Nyckelord som indikerar VIKTIGA mejl (bevaras alltid)
@@ -113,6 +146,15 @@ function isJunk(email) {
   // Kolla ämnesord
   if (JUNK_SUBJECTS.some(s => subject.includes(s))) {
     if (IMPORTANT_KEYWORDS.some(k => subject.includes(k))) {
+      return false;
+    }
+    return true;
+  }
+
+  // Generiska massutskick: info@, hello@, team@, etc. utan viktiga nyckelord
+  const genericPrefixes = ['info@', 'hello@', 'hi@', 'team@', 'support@', 'contact@', 'sales@', 'news@', 'updates@', 'community@'];
+  if (genericPrefixes.some(p => from.startsWith(p))) {
+    if (IMPORTANT_KEYWORDS.some(k => subject.includes(k) || name.includes(k))) {
       return false;
     }
     return true;
@@ -227,8 +269,11 @@ export default async function handler(req, res) {
       return new Date(b.dateISO) - new Date(a.dateISO);
     });
 
+    // Max 60 mejl i rapporten
+    const capped = important.slice(0, 60);
+
     return res.status(200).json({
-      emails: important,
+      emails: capped,
       total: allMessages.length,
       filtered: skippedCount.junk + skippedCount.junkMail,
       important: important.length,
