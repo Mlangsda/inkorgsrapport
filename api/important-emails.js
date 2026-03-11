@@ -142,11 +142,26 @@ function getPriority(email) {
   return 'medium';
 }
 
+// Avsändare som ALLTID filtreras bort oavsett nyckelord (automatiska transaktioner etc.)
+const ALWAYS_JUNK_DOMAINS = [
+  'email.apple.com', 'apple.com', 'bmw.', 'americanexpress', 'amex.',
+  'meta.com', 'business.fb.com', 'facebookmail.com',
+  'stenaline', 'sj.se', 'vy.se', 'mtrx.',
+  'wasa-kredit', 'collector.se', 'resursbank',
+  'connoisseurint', 'macrent.se',
+  'bbmbonnier', 'red.bbmbonnier',
+];
+
 // Kolla om mejlet ska filtreras bort
 function isJunk(email) {
   const from = (email.from?.emailAddress?.address || '').toLowerCase();
   const name = (email.from?.emailAddress?.name || '').toLowerCase();
   const subject = (email.subject || '').toLowerCase();
+
+  // ALLTID filtrera dessa — oavsett nyckelord
+  if (ALWAYS_JUNK_DOMAINS.some(d => from.includes(d))) {
+    return true;
+  }
 
   // Kolla avsändare
   if (JUNK_DOMAINS.some(d => from.includes(d) || name.includes(d))) {
