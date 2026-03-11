@@ -35,6 +35,14 @@ const JUNK_DOMAINS = [
   'typeform.com', 'surveymonkey', 'google-analytics', 'hotjar',
   'intercom', 'zendesk', 'freshdesk', 'crisp.chat',
   'mailgun', 'sendgrid', 'postmark', 'twilio',
+  // Svenska nyhetsbrev / media
+  'bonnier', 'resume.se', 'di.se', 'breakit', 'nyheter24',
+  'aftonbladet', 'expressen', 'svd.se', 'dn.se',
+  'connoisseur', 'nespresso', 'macrent',
+  // Meta / Facebook
+  'facebookmail.com', 'meta.com', 'business.fb.com',
+  // Apple (automatiska)
+  'email.apple.com', 'apple.com',
 ];
 
 // Ämnesord som indikerar automatiska/oviktiga mejl
@@ -59,6 +67,12 @@ const JUNK_SUBJECTS = [
   'delivery notification', 'package delivered',
   'order confirmation', 'orderbekräftelse',
   'booking confirmation', 'bokningsbekräftelse',
+  // Specifika svenska nyhetsbrev/marketing
+  'toppnyheter', 'location fees', 'nu i lager',
+  'weekly update', 'weekly roundup', 'weekly recap',
+  'monthly update', 'monthly roundup',
+  'din faktura från apple', 'your apple receipt',
+  'connoisseur weekly', 'resumé',
 ];
 
 // Nyckelord som indikerar VIKTIGA mejl (bevaras alltid)
@@ -152,7 +166,12 @@ function isJunk(email) {
   }
 
   // Generiska massutskick: info@, hello@, team@, etc. utan viktiga nyckelord
-  const genericPrefixes = ['info@', 'hello@', 'hi@', 'team@', 'support@', 'contact@', 'sales@', 'news@', 'updates@', 'community@'];
+  const genericPrefixes = [
+    'info@', 'hello@', 'hi@', 'team@', 'support@', 'contact@', 'sales@',
+    'news@', 'updates@', 'community@', 'kampanj@', 'bbm@', 'epost@',
+    'no_reply@', 'noreply@', 'do-not-reply@', 'reply@', 'bounce@',
+    'digest@', 'weekly@', 'daily@', 'alert@', 'notification@',
+  ];
   if (genericPrefixes.some(p => from.startsWith(p))) {
     if (IMPORTANT_KEYWORDS.some(k => subject.includes(k) || name.includes(k))) {
       return false;
