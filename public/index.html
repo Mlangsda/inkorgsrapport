@@ -57,6 +57,65 @@
     font-size: 15px;
   }
 
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .refresh-btn:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+  }
+
+  .refresh-btn.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .refresh-btn .spin {
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+
+  .refresh-btn.loading .spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .last-updated {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
   .stats-bar {
     display: flex;
     gap: 1px;
@@ -100,76 +159,45 @@
   .stat-label {
     font-size: 12px;
     color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 2px;
-  }
-
-  .section.hidden {
-    display: none;
-  }
-
-  .sync-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-left: 8px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .sync-indicator.syncing {
-    opacity: 1;
-    color: var(--orange);
-    background: rgba(232,168,64,0.12);
-  }
-
-  .sync-indicator.synced {
-    opacity: 1;
-    color: var(--green);
-    background: rgba(92,184,122,0.12);
-  }
-
-  .sync-indicator.error {
-    opacity: 1;
-    color: var(--red);
-    background: rgba(212,80,80,0.12);
+    margin-top: 4px;
+    font-weight: 500;
   }
 
   .section {
     margin-bottom: 32px;
   }
 
+  .section.hidden {
+    display: none;
+  }
+
   .section-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
-    padding: 0 4px;
+    margin-bottom: 12px;
+    padding: 0 6px;
   }
 
   .section-icon {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 14px;
     flex-shrink: 0;
   }
 
   .section-title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     letter-spacing: -0.3px;
   }
 
   .section-count {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-secondary);
     margin-left: auto;
   }
@@ -178,50 +206,62 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 16px 18px;
+    padding: 16px 20px;
     margin-bottom: 8px;
-    transition: background 0.15s, box-shadow 0.15s;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(64,38,45,0.06);
+    transition: all 0.15s ease;
+    position: relative;
   }
 
   .card:hover {
     background: var(--card-hover);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(196,106,138,0.1);
   }
 
   .card.checked {
-    opacity: 0.4;
+    opacity: 0.5;
+    background: var(--section-bg);
+  }
+
+  .card.checked .card-subject {
+    text-decoration: line-through;
   }
 
   .card-top {
     display: flex;
+    gap: 14px;
     align-items: flex-start;
-    gap: 12px;
   }
 
   .checkbox {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
     border: 2px solid var(--border);
     flex-shrink: 0;
-    margin-top: 2px;
     cursor: pointer;
-    transition: all 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.15s;
+    margin-top: 2px;
+  }
+
+  .checkbox:hover {
+    border-color: var(--accent);
+    background: rgba(196,106,138,0.1);
   }
 
   .checkbox.checked {
-    background: var(--green);
-    border-color: var(--green);
+    background: var(--accent);
+    border-color: var(--accent);
   }
 
   .checkbox.checked::after {
-    content: '\2713';
-    color: #fff;
-    font-size: 12px;
+    content: '✓';
+    color: white;
+    font-size: 14px;
     font-weight: 700;
   }
 
@@ -235,6 +275,7 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 4px;
+    flex-wrap: wrap;
   }
 
   .priority-dot {
@@ -244,18 +285,19 @@
     flex-shrink: 0;
   }
 
-  .priority-high { background: var(--red); box-shadow: 0 0 6px var(--red); }
-  .priority-medium { background: var(--orange); box-shadow: 0 0 6px rgba(255,159,10,0.4); }
+  .priority-high { background: var(--red); }
+  .priority-medium { background: var(--orange); }
+  .priority-low { background: var(--green); }
 
   .card-date {
     font-size: 12px;
     color: var(--text-secondary);
+    font-weight: 500;
   }
 
   .card-from {
-    font-size: 13px;
-    color: var(--accent);
-    font-weight: 500;
+    font-size: 12px;
+    color: var(--text-secondary);
   }
 
   .card-subject {
@@ -270,6 +312,7 @@
   .card-preview {
     font-size: 13px;
     color: var(--text-secondary);
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -277,63 +320,59 @@
   }
 
   .card-folder {
-    display: inline-block;
     font-size: 11px;
     color: var(--text-secondary);
-    background: rgba(196,106,138,0.08);
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-top: 8px;
+    margin-top: 4px;
+    opacity: 0.7;
   }
 
-  footer {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-secondary);
-    font-size: 13px;
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
+  .sync-indicator {
+    font-size: 11px;
+    margin-left: 8px;
+    transition: opacity 0.3s;
   }
 
-  footer strong {
-    color: var(--text);
-  }
+  .sync-indicator.syncing { color: var(--orange); }
+  .sync-indicator.synced { color: var(--green); }
+  .sync-indicator.error { color: var(--red); }
 
-  /* Calendar — horizontal day boxes */
-  .calendar-section { margin-bottom: 32px; }
+  /* Calendar styles */
+  .calendar-section {
+    margin-bottom: 32px;
+  }
 
   .calendar-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
-    padding: 0 4px;
   }
 
-  .calendar-top .cal-title {
-    font-size: 15px;
+  .cal-title {
+    font-size: 16px;
     font-weight: 700;
-    color: var(--text);
+    letter-spacing: -0.3px;
   }
 
   .calendar-legend {
     display: flex;
     gap: 12px;
-    font-size: 10px;
-    color: var(--text-secondary);
+    flex-wrap: wrap;
+    margin-left: 16px;
   }
 
   .calendar-legend-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
   }
 
   .calendar-dot {
     width: 8px;
     height: 8px;
-    border-radius: 3px;
-    flex-shrink: 0;
+    border-radius: 50%;
   }
 
   .dot-arbete { background: #8ed4a6; }
@@ -347,52 +386,38 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
-    max-width: 100%;
   }
 
   .calendar-day-box {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 10px 7px 8px;
+    padding: 10px 8px 8px;
     min-height: 80px;
-    min-width: 0;
-    box-shadow: 0 1px 3px rgba(64,38,45,0.04);
-    overflow: hidden;
   }
 
   .calendar-day-box.is-today {
     border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 1px 4px rgba(196,106,138,0.15);
+    box-shadow: 0 0 0 2px rgba(196,106,138,0.18);
   }
 
   .calendar-day-box.is-empty {
-    opacity: 0.5;
+    background: var(--section-bg);
+    opacity: 0.7;
   }
 
   .calendar-day-name {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
     color: var(--text-secondary);
-    margin-bottom: 1px;
-  }
-
-  .calendar-day-box.is-today .calendar-day-name {
-    color: var(--accent);
+    margin-bottom: 2px;
   }
 
   .calendar-day-num {
     font-size: 18px;
     font-weight: 700;
-    color: var(--text);
-    line-height: 1.1;
     margin-bottom: 6px;
-  }
-
-  .calendar-day-box.is-today .calendar-day-num {
-    color: var(--accent);
   }
 
   .cal-ev {
@@ -460,9 +485,53 @@
     border: 1px solid var(--border);
   }
 
+  .loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+    font-size: 15px;
+  }
+
+  .loading-state .spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--red);
+    font-size: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--green);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
   @media (max-width: 600px) {
     .container { padding: 20px 12px 60px; }
     header h1 { font-size: 24px; }
+    .header-row { flex-wrap: wrap; }
     .stats-bar { flex-direction: column; border-radius: 12px; }
     .stat:first-child { border-radius: 12px 12px 0 0; }
     .stat:last-child { border-radius: 0 0 12px 12px; }
@@ -482,41 +551,34 @@
 
 <div class="container">
   <header>
-    <div style="display:flex; align-items:center; justify-content:flex-start; gap:14px; margin-bottom:8px;">
-      <img src="/mlc-logo.png" alt="MLC" style="width:48px; height:48px; object-fit:contain;">
-      <h1 style="font-size:32px; font-weight:700; letter-spacing:-0.5px; margin:0;">Inkorgsrapport</h1>
+    <div class="header-row">
+      <div class="header-left">
+        <img src="/mlc-logo.png" alt="MLC" style="width:48px; height:48px; aspect-ratio:1/1; object-fit:contain;">
+        <h1>Inkorgsrapport</h1>
+      </div>
+      <button class="refresh-btn" id="refresh-btn" onclick="refreshEmails()">
+        <span class="spin">&#8635;</span> Uppdatera
+      </button>
     </div>
     <p>Olästa mejl som kräver din uppmärksamhet</p>
-    <details style="text-align:left; margin-top:18px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 18px; font-size:13px; color:var(--text-secondary); cursor:pointer; box-shadow:0 1px 3px rgba(64,38,45,0.06);">
-      <summary style="color:var(--text); font-weight:600; font-size:14px; margin-bottom:6px;">Urvalskriterier — varför just dessa mejl?</summary>
-      <p style="margin-top:10px;">Projektledaren gick igenom <strong>1 345 olästa mejl</strong> och valde ut <strong>49 som viktiga</strong> baserat på dessa kriterier:</p>
-      <ul style="margin:10px 0 0 18px; line-height:1.8;">
-        <li><strong>Affärskritiskt</strong> — offerter, kundförfrågningar, samarbeten, avtal som väntar på svar eller beslut</li>
-        <li><strong>Ekonomi &amp; juridik</strong> — fakturor, skulder, Kronofogden, Bolagsverket, försäkringar, skatteärenden</li>
-        <li><strong>Pågående projekt</strong> — Evolan, Yobedoo, Scalex — mejl kopplade till aktiva uppdrag</li>
-        <li><strong>Personligt viktigt</strong> — myndighetsärenden, hälsa, bostad, familj</li>
-        <li><strong>Tidskänsligt</strong> — mejl som hade/har deadline eller kräver snabb åtgärd</li>
-      </ul>
-      <p style="margin-top:10px;"><strong>Filtrerades bort:</strong> nyhetsbrev, automatiska notiser, reklam, kvitton utan åtgärd, bekräftelsemejl, sociala medier-notiser, mejl redan hanterade i andra kanaler.</p>
-      <p style="margin-top:6px; font-style:italic;">Rapporten uppdateras löpande av Projektledaren med nya viktiga mejl.</p>
-    </details>
+    <div class="last-updated" id="last-updated"></div>
   </header>
 
   <div class="stats-bar">
     <div class="stat active" data-filter="alla" onclick="filterSections(this, 'alla')">
-      <div class="stat-value" style="color: var(--accent)">57</div>
-      <div class="stat-label">Alla viktiga</div>
+      <div class="stat-value" style="color: var(--accent)" id="stat-alla">—</div>
+      <div class="stat-label">Viktiga</div>
     </div>
     <div class="stat" data-filter="affar" onclick="filterSections(this, 'affar')">
-      <div class="stat-value">26</div>
+      <div class="stat-value" id="stat-affar">—</div>
       <div class="stat-label">Affär / Kund</div>
     </div>
     <div class="stat" data-filter="hog" onclick="filterSections(this, 'hog')">
-      <div class="stat-value" id="hog-count">14</div>
+      <div class="stat-value" id="stat-hog">—</div>
       <div class="stat-label">Hög prioritet</div>
     </div>
     <div class="stat" data-filter="kvar" onclick="filterSections(this, 'kvar')">
-      <div class="stat-value" id="remaining-count" style="color: var(--red)">57</div>
+      <div class="stat-value" id="stat-kvar" style="color: var(--red)">—</div>
       <div class="stat-label">Kvar att hantera</div>
     </div>
   </div>
@@ -539,1035 +601,27 @@
     </div>
   </div>
 
-  <!-- AFFAR/KUND -->
-  <div class="section" data-category="affar">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(10,132,255,0.15); color: var(--accent);">&#9733;</div>
-      <div class="section-title">Affär / Kund</div>
-      <div class="section-count">18 mejl</div>
-    </div>
-
-    <div class="card" data-id="faktura-evolan-pharma">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">8 mar 2026</span>
-            <span class="card-from">Marzena Langsdale (till mig själv)</span>
-          </div>
-          <div class="card-subject">Viktigt meddelande Faktura</div>
-          <div class="card-preview">Kolla att fakturan är skickad till Evolan Pharma.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-uk-ad-janine-draft">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">5 mar 2026</span>
-            <span class="card-from">Janine Davies (Evolan)</span>
-          </div>
-          <div class="card-subject">New UK advertisement</div>
-          <div class="card-preview">Utkast till ny annons efter planeringsmöte. Janine har skickat draft copy — väntar på feedback från Cecilia och Jonathan. Text om heritage och bandages.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-uk-ad-cecilia-legal">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">5 mar 2026</span>
-            <span class="card-from">Cecilia Haldorsen (Evolan)</span>
-          </div>
-          <div class="card-subject">Sv: New UK advertisement</div>
-          <div class="card-preview">Varnar att svensk lag förbjuder jämförande reklam — texten kan behöva justeras. "Did you know the benefits of..."</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-uk-ad-janine-v2">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">6 mar 2026</span>
-            <span class="card-from">Janine Davies (Evolan)</span>
-          </div>
-          <div class="card-subject">RE: New UK advertisement (uppdaterad version)</div>
-          <div class="card-preview">Ny version med ändrad text — refererar till produkternas heritage. Jonathan vill använda samma material i Irland.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-subtitles-jonathan">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <span class="card-date">6 mar 2026</span>
-            <span class="card-from">Jonathan Brady (Evolan)</span>
-          </div>
-          <div class="card-subject">RE: Subtitled versions</div>
-          <div class="card-preview">Korrektioner behövs för undertextning av Viscopaste Children-video. AI-genererade undertexter hade fel.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-subtitles-janine">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <span class="card-date">6 mar 2026</span>
-            <span class="card-from">Janine Davies (Evolan)</span>
-          </div>
-          <div class="card-subject">Re: Subtitled versions</div>
-          <div class="card-preview">Kan fortfarande inte öppna de uppdaterade filmerna — felmeddelanden kvarstår.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="domotion-subtitles">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <span class="card-date">6 mar 2026</span>
-            <span class="card-from">Jonas (Domotion)</span>
-          </div>
-          <div class="card-subject">Sv: Subtitled versions</div>
-          <div class="card-preview">Bekräftar att AI-undertextning inte fungerade bra. Jonas gjorde ändringar initialt, fler korrigeringar behövs.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="convendum-bizmeet">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <span class="card-date">6 mar 2026</span>
-            <span class="card-from">Victoria Larsson (Convendum)</span>
-          </div>
-          <div class="card-subject">Sv: 12/3 fråga — Biz Meet</div>
-          <div class="card-preview">Bekräftelse: Biz Meet 12 mars kl 15.00 på CONVENDUM, Brahegatan 10. AW/mingel.</div>
-          <div class="card-folder">Inkorg</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-quote">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">2 jan 2025</span>
-            <span class="card-from">Janine Davies (Evolan)</span>
-          </div>
-          <div class="card-subject">Marzena - quote</div>
-          <div class="card-preview">Lista med arbete som behövs för UK&amp;I — nya kreativa material och uppdateringar av befintliga annonser. Diskuterat vid besöket i Sverige i december.</div>
-          <div class="card-folder">___2025 Offererade Evolan</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-kids-scripting">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">10 feb 2025</span>
-            <span class="card-from">Cecilia Haldorsen (Evolan)</span>
-          </div>
-          <div class="card-subject">FW: I & V for kids - advert scripting</div>
-          <div class="card-preview">Vidarebefordrat material från Cecilia (Global BU Manager Branded OTC) gällande barnreklam-manus för Evolan.</div>
-          <div class="card-folder">___2025 Offererade Evolan</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-esim-banner">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">7 maj 2025</span>
-            <span class="card-from">Cecilia Haldorsen (Evolan)</span>
-          </div>
-          <div class="card-subject">FW: Esim bannerista</div>
-          <div class="card-preview">Bannerutkast för Esim-produkt, vidarebefordrat från Cecilia. Markerad som hög prioritet.</div>
-          <div class="card-folder">_Evolan BANDAGES</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-cleari-banners">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">7 maj 2025</span>
-            <span class="card-from">Cecilia Haldorsen (Evolan)</span>
-          </div>
-          <div class="card-subject">FW: luonnoskuvia Cleari bannereihin</div>
-          <div class="card-preview">Utkast/skisser till Cleari-banners, vidarebefordrat från Cecilia Haldorsen.</div>
-          <div class="card-folder">_Evolan BANDAGES</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-visco-script-janine">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">7 nov 2025</span>
-            <span class="card-from">Janine Davies (Evolan)</span>
-          </div>
-          <div class="card-subject">RE: New childrens script for Visco film</div>
-          <div class="card-preview">Uppdaterat barnmanus för Visco-film med extra stycke. Janine noterar att manuset blivit längre än vad Marzena troligen önskar. Behöver din feedback.</div>
-          <div class="card-folder">Okänt</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="evolan-visco-original">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">4 nov 2025</span>
-            <span class="card-from">Janine Davies (Evolan)</span>
-          </div>
-          <div class="card-subject">New childrens script for Visco film</div>
-          <div class="card-preview">Nytt barnmanus för Visco-filmen. Skickat för granskning och kommentarer. Tråd med Jonathan Brady (Irland) som är positiv.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="sparkcomm-quotes">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">12 aug 2025</span>
-            <span class="card-from">Camilla Törnblom (Spark Comm)</span>
-          </div>
-          <div class="card-subject">Quotes från Camilla och Åsa</div>
-          <div class="card-preview">"Working with Marzena is truly inspiring..." — Quotes/rekommendationer från samarbetspartners för Marzenas hemsida/material.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="rawnice-lead">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">28 aug 2025</span>
-            <span class="card-from">Marzena (till sig själv)</span>
-          </div>
-          <div class="card-subject">Damon Marknadschef - rawnice.com</div>
-          <div class="card-preview">Lead-anteckning: Marknadschef på RawNice som potentiell kontakt. Sparad för uppföljning.</div>
-          <div class="card-folder">___NEW BUSINESS - JOBB MM</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="adcreative">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">7 mar 2025</span>
-            <span class="card-from">Meliksah Delice (AdCreative.ai)</span>
-          </div>
-          <div class="card-subject">Re: Adcreative.ai Contact</div>
-          <div class="card-preview">60% rabatt på årsplaner, ej tillgängligt via appen. Erbjudande att arrangera rabatten manuellt. Verktyg för MLC?</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="talent-christina">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">6 dec 2024</span>
-            <span class="card-from">Christina Nilsson (Sunshine Media)</span>
-          </div>
-          <div class="card-subject">Re: Marknadsföring sociala medier</div>
-          <div class="card-preview">Bekräftar möte den 12:e för att lära känna varandra. Potentiell samarbetspartner/freelancer för sociala medier.</div>
-          <div class="card-folder">_TALENT BANK</div>
-        </div>
-      </div>
+  <!-- MEJLKORT — byggs dynamiskt -->
+  <div id="email-sections">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div>Hämtar mejl från Exchange...</div>
     </div>
   </div>
-
-  <!-- YOBEDOO -->
-  <div class="section" data-category="yobedoo">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(191,90,242,0.15); color: var(--purple);">&#9670;</div>
-      <div class="section-title">Yobedoo</div>
-      <div class="section-count">4 mejl</div>
-    </div>
-
-    <div class="card" data-id="yobedoo-launch">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">20 nov 2025</span>
-            <span class="card-from">Lars Fins</span>
-          </div>
-          <div class="card-subject">Re: Förslag på idé hur vi lanserar Yobedoo — grand opening 30 januari!</div>
-          <div class="card-preview">Lars tycker att sikte bör tas på tidig januari, torsdag bättre än fredag. Diskussion om hemsidan och om det finns mer tid i mitten av januari. 3 mejl i tråden.</div>
-          <div class="card-folder">__YOBEDOO</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="yobedoo-aclarity">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">23 nov 2025</span>
-            <span class="card-from">Anna-Karin Lingham</span>
-          </div>
-          <div class="card-subject">Re: Så här jobbar Aclarity — konsultverksamhet inom retail/fmcg</div>
-          <div class="card-preview">Anna-Karin kommenterar: "Intressant att se och toppen som benchmark för oss. Bra sätt att marknadsföra verksamheten."</div>
-          <div class="card-folder">__YOBEDOO</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="yobedoo-update">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">28 okt 2025</span>
-            <span class="card-from">Lars Fins</span>
-          </div>
-          <div class="card-subject">Kort update och en läsvärd rapport</div>
-          <div class="card-preview">Signaler om ökad bilförsäljning i Europa. Lars delar rapport och update — kan vara relevant för Yobedoo-strategin.</div>
-          <div class="card-folder">__YOBEDOO</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="yobedoo-sharepoint">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">19 nov 2025</span>
-            <span class="card-from">Marzena (till sig själv)</span>
-          </div>
-          <div class="card-subject">Länk till Yobedoo Sharepoint</div>
-          <div class="card-preview">Teams Community-länk för Yobedoo. Sparad referens för teamet.</div>
-          <div class="card-folder">__YOBEDOO</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCALEX / COACHING -->
-  <div class="section" data-category="scalex">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(48,209,88,0.15); color: var(--green);">&#9650;</div>
-      <div class="section-title">Scalex Coaching / Företagsutveckling</div>
-      <div class="section-count">4 mejl</div>
-    </div>
-
-    <div class="card" data-id="scalex-nda">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">28 nov 2025</span>
-            <span class="card-from">Magnus Burvall (Scalex GP)</span>
-          </div>
-          <div class="card-subject">Uppdaterade text Re: Sekretessavtal</div>
-          <div class="card-preview">"Hej Marzena, vad tror du om nedan?" — Uppdaterat förslag på definition av Konfidentiell Information. Behöver din återkomst.</div>
-          <div class="card-folder">__SCALEX COACHING</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="scalex-ws4">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">7 okt 2025</span>
-            <span class="card-from">Magnus Burvall (Scalex GP)</span>
-          </div>
-          <div class="card-subject">Summering av WS4 och "att göra" inför nästa workshop</div>
-          <div class="card-preview">Summering från workshop 4 med uppgifter inför nästa workshop den 13 november kl 13.00. Tydliga framsteg mot skalbart företag.</div>
-          <div class="card-folder">__SCALEX COACHING</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="scalex-enkat1">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">13 maj 2025</span>
-            <span class="card-from">Magnus Burvall (Scalex GP)</span>
-          </div>
-          <div class="card-subject">Enkät 1 — Vad vill du bygga + Enkät 2 — Nuläge</div>
-          <div class="card-preview">Två enkäter att fylla i till 19/5. Spontana svar räcker. Förberedelse inför workshopprogrammet.</div>
-          <div class="card-folder">__SCALEX COACHING</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="beauty-week">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">21 okt 2025</span>
-            <span class="card-from">Lisen (The Network Society)</span>
-          </div>
-          <div class="card-subject">Sv: INBJUDAN Stockholm Beauty Week AtSix 17 november</div>
-          <div class="card-preview">Lisen reflekterar över kunders utbildningsbehov inom PR, strategi och kommunikation. Nyttig insikt för MLC.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- EKONOMI / JURIDIK -->
-  <div class="section" data-category="ekonomi">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(255,69,58,0.15); color: var(--red);">&#9679;</div>
-      <div class="section-title">Ekonomi / Juridik / Fakturor</div>
-      <div class="section-count">4 mejl</div>
-    </div>
-
-    <div class="card" data-id="advokat">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">31 mar 2025</span>
-            <span class="card-from">Emelie Franzér (Elander Advokatbyrå)</span>
-          </div>
-          <div class="card-subject">Sv: Underlag efter vårt möte</div>
-          <div class="card-preview">Tack för möte och mail. Emelie besvarar frågan när hon tittat på materialet. Advokat/Partner, juridiskt ärende pågående.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="faktura-samotsoh">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">25 mar 2025</span>
-            <span class="card-from">Samotsoh AB (via Fortnox)</span>
-          </div>
-          <div class="card-subject">Faktura 1781 bifogas</div>
-          <div class="card-preview">Faktura från Patrick, SAMOTSOH AB. Bifogad via Linda Larsson. Kontrollera om den är betald.</div>
-          <div class="card-folder">_Fakturor_kvitton</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="wix-cancel">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">24 jan 2025</span>
-            <span class="card-from">Wix.com</span>
-          </div>
-          <div class="card-subject">Your Premium Plan has been Canceled / Refund Request</div>
-          <div class="card-preview">Core Plan för marzenalangsdale.com upphävd, löper ut 20 dec 2025. Refund-begäran på 330 EUR mottagen. Se över alternativ för hemsidan.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="bilskada">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">3 sep 2025</span>
-            <span class="card-from">Marcus Nilsson (DAB Group)</span>
-          </div>
-          <div class="card-subject">Re: Skadan på bil vid Torsviksbron</div>
-          <div class="card-preview">Projektledaren har varit på utbildning, återkommer imorgon. Marcus följer upp skadeärendet. Behöver bevakning.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOLAGSVERKET / FORETAG -->
-  <div class="section" data-category="bolag">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(255,159,10,0.15); color: var(--orange);">&#9632;</div>
-      <div class="section-title">MLC Nest AB / Bolagsverket</div>
-      <div class="section-count">3 mejl</div>
-    </div>
-
-    <div class="card" data-id="bolagsverket-reg">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">26 nov 2024</span>
-            <span class="card-from">Bolagsverket</span>
-          </div>
-          <div class="card-subject">Registreringsbevis för 559506-7678</div>
-          <div class="card-preview">MLC Nest AB registrerat. Nästa steg: ansök om F-skatt, anmäl för moms/arbetsgivaravgifter på verksamt.se.</div>
-          <div class="card-folder">___Aktiebolag</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="bolagsverket-forelaggande">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">22 nov 2024</span>
-            <span class="card-from">Bolagsverket</span>
-          </div>
-          <div class="card-subject">Föreläggande — ärendenummer 651037/2024</div>
-          <div class="card-preview">Behöver fler uppgifter för behandling. Deadline var 29 november 2024. Kontrollera att detta är hanterat.</div>
-          <div class="card-folder">___Aktiebolag</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="convendum-signed">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">20 feb 2025</span>
-            <span class="card-from">Convendum Stockholm City AB</span>
-          </div>
-          <div class="card-subject">All parties have signed - Convendum</div>
-          <div class="card-preview">Alla parter har signerat kontorsavtalet via Oneflow. Dokument-ID 9871874. Spara som referens.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- OVRIGT VIKTIGT -->
-  <div class="section" data-category="ovrigt">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(255,255,255,0.08); color: var(--text-secondary);">&#9673;</div>
-      <div class="section-title">Övrigt viktigt</div>
-      <div class="section-count">2 mejl</div>
-    </div>
-
-    <div class="card" data-id="parkering-ogla">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">26 aug 2025</span>
-            <span class="card-from">Stockholm Parkering</span>
-          </div>
-          <div class="card-subject">Sv: Gällande sugga med ögla K485345</div>
-          <div class="card-preview">Kundservice undersöker om det går att ordna en ögla på MC-plats för cykel. Svar på Marzenas klagomål om bemötande.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="resume-biljetter">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">8 okt 2025</span>
-            <span class="card-from">Resume / Bonnier News</span>
-          </div>
-          <div class="card-subject">Re: Gällande era biljetter till Sveriges bästa marknadschef</div>
-          <div class="card-preview">Faktura för biljetterna kommer till samma fakturaadress inom några dagar. Evenemangsbiljetter för Sveriges bästa marknadschef.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÄLDRE MEJL: EKONOMI / SKULDER -->
-  <div class="section" data-category="ekonomi">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(255,69,58,0.15); color: var(--red);">&#9679;</div>
-      <div class="section-title">Äldre: Ekonomi / Skulder / Försäkring</div>
-      <div class="section-count">10 mejl (2019–2020)</div>
-    </div>
-
-    <div class="card" data-id="getty-images-past-due-balance">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">27 jul 2020</span>
-            <span class="card-from">Mira Dixon (Getty Images)</span>
-          </div>
-          <div class="card-subject">Getty Images: Past Due Balance — konto 2839817</div>
-          <div class="card-preview">Getty Images kontaktar angående förfallen betalning för konto 2839817. Kontrollera om skulden är reglerad.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="vangardlaw-forfallen-faktura">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">29 jul 2019</span>
-            <span class="card-from">Mats E. Jonsson (Vångård Law)</span>
-          </div>
-          <div class="card-subject">Förfallen faktura</div>
-          <div class="card-preview">Advokatbyrån Vångård Law påminner om förfallen faktura (nr 2019053). Kontrollera om den betalats.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="forsakringskassan-sgi-beslut">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">9 jun 2020</span>
-            <span class="card-from">Försäkringskassan</span>
-          </div>
-          <div class="card-subject">Beslut om sjukpenninggrundande inkomst (SGI)</div>
-          <div class="card-preview">Försäkringskassan har beslutat om sjukpenninggrundande inkomst. Viktigt ekonomiskt beslut att kontrollera.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="synoptik-betalningspaminnelse">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">12 jun 2020</span>
-            <span class="card-from">Synoptik Sweden AB</span>
-          </div>
-          <div class="card-subject">Betalningspåminnelse</div>
-          <div class="card-preview">Betalningspåminnelse från Synoptik, faktura 192941 som förföll 2020-05-28.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="getty-images-statement-of-account">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">8 jul 2019</span>
-            <span class="card-from">Getty Images (EMEA Credit Control)</span>
-          </div>
-          <div class="card-subject">Getty Images — Statement of Account</div>
-          <div class="card-preview">Kontoutdrag för konto 2839817. Relaterat till den förfallna fakturan.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="wednesday-relations-kreditering">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">3 aug 2020</span>
-            <span class="card-from">Klara Sernemyr (Wednesday Relations)</span>
-          </div>
-          <div class="card-subject">Sv: Angående fråga om utbildning — uppsägning</div>
-          <div class="card-preview">Bekräftar att en faktura för utbildning kommer att krediteras efter uppsägning.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="resurs-bank-ocr-info">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">7 jun 2020</span>
-            <span class="card-from">Resurs Bank</span>
-          </div>
-          <div class="card-subject">Re: Resurs Bank — OCR-nummer</div>
-          <div class="card-preview">Resurs Bank skickar OCR-nummer. Kan vara kopplat till en aktiv kredit eller betalning.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="if-forsakring-besked">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">17 sep 2019</span>
-            <span class="card-from">If Försäkring</span>
-          </div>
-          <div class="card-subject">Din försäkring KC193682-7136-01</div>
-          <div class="card-preview">Information om försäkring. Bör kontrolleras att allt är i ordning.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="better-globe-kundnummer">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">16 sep 2020</span>
-            <span class="card-from">Better Globe</span>
-          </div>
-          <div class="card-subject">Tappat kundnummer och inloggningsuppgifter</div>
-          <div class="card-preview">Better Globe bekräftar ärende om tappade inloggningsuppgifter. Investering som bör följas upp.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="nils-friberg-vattenskada-rapport">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">30 sep 2019</span>
-            <span class="card-from">Nils Friberg</span>
-          </div>
-          <div class="card-subject">Din anmälan om vätskeskada — skadenummer 383127</div>
-          <div class="card-preview">Rapport från Humidus gällande vattenläckan. Bostadsrelaterat försäkringsärende.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÄLDRE MEJL: AFFÄR / KONTAKTER -->
-  <div class="section" data-category="affar">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(10,132,255,0.15); color: var(--accent);">&#9733;</div>
-      <div class="section-title">Äldre: Affär / Kontakter</div>
-      <div class="section-count">8 mejl (2019–2020)</div>
-    </div>
-
-    <div class="card" data-id="bjorn-hermansson-faktura-tigerbalsam">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">30 jan 2020</span>
-            <span class="card-from">Björn Hermansson (Humdidum)</span>
-          </div>
-          <div class="card-subject">Faktura Tiger Balsam</div>
-          <div class="card-preview">Leverantörsfaktura för Tiger Balsam-arbete, kopplad till Evolan-uppdrag.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="linda-hansson-portfolio-samarbete">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">12 jun 2020</span>
-            <span class="card-from">Linda Hansson</span>
-          </div>
-          <div class="card-subject">Re: Portfolio med mera</div>
-          <div class="card-preview">Linda följer upp angående potentiellt samarbete och frågar om du hört från kunden.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="cocoon-marbella-aterkoppling">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">15 jun 2020</span>
-            <span class="card-from">Marc Sheldon (Cocoon Marbella)</span>
-          </div>
-          <div class="card-subject">Återkopplar — Hur står det till?</div>
-          <div class="card-preview">Marc Sheldon återkopplar och vill höras av igen. Potentiell affärskontakt.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="cappasity-samarbetsforfragan">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">19 aug 2020</span>
-            <span class="card-from">Daria Kondratieva (Cappasity)</span>
-          </div>
-          <div class="card-subject">Cappasity &amp; Marzena Langsdale — Cooperation</div>
-          <div class="card-preview">Söker fotografer och studior för 3D-fotografering. Potentiellt affärssamarbete.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="oscar-properties-mote">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">2 nov 2020</span>
-            <span class="card-from">Ulrika Stålberg (Oscar Properties)</span>
-          </div>
-          <div class="card-subject">Re: Tid på fredag</div>
-          <div class="card-preview">Försäljningschef på Oscar Properties bekräftar möte. Fastighetskontakt.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="lexter-live-streaming-fraga">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">3 nov 2020</span>
-            <span class="card-from">Alexander Kassberg (Lexter)</span>
-          </div>
-          <div class="card-subject">Re: Live Streaming-fråga</div>
-          <div class="card-preview">Juridisk rådgivning från Lexter om live streaming.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="adobe-dam-enterprise-kontakt">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">7 aug 2019</span>
-            <span class="card-from">Melina Persson (Adobe)</span>
-          </div>
-          <div class="card-subject">RE: Digital asset management från Adobe</div>
-          <div class="card-preview">Uppföljning efter samtal om Digital Asset Management och grupplicenser.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="hakan-forhandsavtal-helix">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">24 aug 2019</span>
-            <span class="card-from">Håkan Johnsson</span>
-          </div>
-          <div class="card-subject">Fwd: 02.2901 Förhandsavtal.pdf</div>
-          <div class="card-preview">Håkan vidarebefordrar ett förhandsavtal för Helix. Kan vara fastighetsrelaterat avtal.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÄLDRE MEJL: PERSONLIGT / MYNDIGHETER -->
-  <div class="section" data-category="ovrigt">
-    <div class="section-header">
-      <div class="section-icon" style="background: rgba(255,159,10,0.15); color: var(--orange);">&#9632;</div>
-      <div class="section-title">Äldre: Personligt / Myndigheter</div>
-      <div class="section-count">4 mejl (2020)</div>
-    </div>
-
-    <div class="card" data-id="forsakringskassan-ansokan-mottagen">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">4 jun 2020</span>
-            <span class="card-from">Försäkringskassan</span>
-          </div>
-          <div class="card-subject">Vi har tagit emot din ansökan</div>
-          <div class="card-preview">Försäkringskassan bekräftar att en ansökan tagits emot.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="polisen-parkeringsanmarkning-beslut">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">7 aug 2020</span>
-            <span class="card-from">Polismyndigheten Stockholm</span>
-          </div>
-          <div class="card-subject">Beslut gällande parkeringsanmärkning NMN371</div>
-          <div class="card-preview">Polismyndigheten meddelar beslut i ärende A381.168/2020 gällande parkeringsanmärkning.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="hakan-alzheimer-meddelande">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-high"></div>
-            <span class="card-date">25 feb 2020</span>
-            <span class="card-from">Håkan Johnsson</span>
-          </div>
-          <div class="card-subject">Re: Min Alzheimer-sjukdom</div>
-          <div class="card-preview">Håkan skriver om sin sjukdom och frågar när ni kan träffas igen.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m5-kokscenter-oscar-properties">
-      <div class="card-top">
-        <div class="checkbox" onclick="toggleCheck(this)"></div>
-        <div class="card-content">
-          <div class="card-meta">
-            <div class="priority-dot priority-medium"></div>
-            <span class="card-date">15 jun 2020</span>
-            <span class="card-from">Jesper Finn (M5 Kökscenter)</span>
-          </div>
-          <div class="card-subject">Sv: Information från Oscar Properties</div>
-          <div class="card-preview">Jesper ber om ursäkt, nämner info från Oscar Properties. Troligen kopplat till köksinstallation.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <footer>
   <p>Genererad av <strong>Projektledaren</strong> &mdash; MLC AI Team</p>
-  <p style="margin-top: 6px; font-size: 11px;">49 av 1 345 olästa mejl klassades som viktiga. Övriga bestod av shoppingkvitton, nyhetsbrev, resebekräftelser, automatiska notiser och liknande.</p>
+  <p style="margin-top: 6px; font-size: 11px;" id="footer-stats"></p>
 </footer>
 
 <script>
 (function() {
   const STORAGE_KEY = 'inbox-report-checked';
+  let currentEmails = [];
+  let currentFilter = 'alla';
 
-  // MS Graph message IDs for each card
-  const EMAIL_IDS = {
-    "faktura-evolan-pharma": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVyWJhzAAA=",
-    "evolan-uk-ad-janine-draft": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVwRCEZAAA=",
-    "evolan-uk-ad-cecilia-legal": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVwRCEiAAA=",
-    "evolan-uk-ad-janine-v2": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVw-YuQAAA=",
-    "evolan-subtitles-jonathan": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVw-YuiAAA=",
-    "evolan-subtitles-janine": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVw-YujAAA=",
-    "domotion-subtitles": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVxoZ8pAAA=",
-    "convendum-bizmeet": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAVw-YuPAAA=",
-    "evolan-quote": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAARv9y_QAADKcBpiwgLVS4zTwdnFAhlvAARw0pUlAAA=",
-    "evolan-kids-scripting": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAARv9y_QAADKcBpiwgLVS4zTwdnFAhlvAAR5uqVCAAA=",
-    "evolan-esim-banner": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUtCAADKcBpiwgLVS4zTwdnFAhlvAATnaOzHAAA=",
-    "evolan-cleari-banners": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUtCAADKcBpiwgLVS4zTwdnFAhlvAATnaOzGAAA=",
-    "evolan-visco-script-janine": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAUhjny2AAA=",
-    "evolan-visco-original": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAUhjny2AAA=",
-    "sparkcomm-quotes": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAATobsplAAA=",
-    "rawnice-lead": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUsBAADKcBpiwgLVS4zTwdnFAhlvAATwGtzqAAA=",
-    "adcreative": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAR_fbrTAAA=",
-    "yobedoo-launch": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAUIKR_zAADKcBpiwgLVS4zTwdnFAhlvAAUq8C-1AAA=",
-    "yobedoo-aclarity": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAUIKR_zAADKcBpiwgLVS4zTwdnFAhlvAAUtVJbWAAA=",
-    "yobedoo-update": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAUIKR_zAADKcBpiwgLVS4zTwdnFAhlvAAUbwFrKAAA=",
-    "yobedoo-sharepoint": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAUIKR_zAADKcBpiwgLVS4zTwdnFAhlvAAUpqNtQAAA=",
-    "scalex-nda": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAASZKSDlAADKcBpiwgLVS4zTwdnFAhlvAAU9MAhUAAA=",
-    "scalex-ws4": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAASZKSDlAADKcBpiwgLVS4zTwdnFAhlvAAUOFp1BAAA=",
-    "beauty-week": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAUXZY59AAA=",
-    "advokat": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUroAADKcBpiwgLVS4zTwdnFAhlvAASOVwMIAAA=",
-    "faktura-samotsoh": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUszAADKcBpiwgLVS4zTwdnFAhlvAASKxgZDAAA=",
-    "wix-cancel": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAARjz865AAA=",
-    "bilskada": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAT244gcAAA=",
-    "bolagsverket-reg": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAGdo6cMAADKcBpiwgLVS4zTwdnFAhlvAAQ89NVJAAA=",
-    "convendum-signed": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAJRdogbAADKcBpiwgLVS4zTwdnFAhlvAAR1YZQ-AAA=",
-    "resume-biljetter": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAAUOFcPQAAA=",
-    "getty-images-past-due-balance": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkQ9PAAA=",
-    "getty-images-statement-of-account": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkgLCAAA=",
-    "vangardlaw-forfallen-faktura": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkgJjAAA=",
-    "forsakringskassan-sgi-beslut": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRHLAAA=",
-    "forsakringskassan-ansokan-mottagen": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRIfAAA=",
-    "synoptik-betalningspaminnelse": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRG1AAA=",
-    "wednesday-relations-kreditering": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkQ8cAAA=",
-    "resurs-bank-ocr-info": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRH9AAA=",
-    "if-forsakring-besked": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkgDyAAA=",
-    "better-globe-kundnummer": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABljrz3AAA=",
-    "nils-friberg-vattenskada-rapport": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkdd5AAA=",
-    "bjorn-hermansson-faktura-tigerbalsam": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkdRQAAA=",
-    "linda-hansson-portfolio-samarbete": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRG0AAA=",
-    "cocoon-marbella-aterkoppling": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRGYAAA=",
-    "cappasity-samarbetsforfragan": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABljr6mAAA=",
-    "oscar-properties-mote": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABpOGLqAAA=",
-    "lexter-live-streaming-fraga": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABpaRTJAAA=",
-    "adobe-dam-enterprise-kontakt": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUsXAADKcBpiwgLVS4zTwdnFAhlvAABlkCdiAAA=",
-    "hakan-forhandsavtal-helix": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkgG8AAA=",
-    "polisen-parkeringsanmarkning-beslut": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkQ8BAAA=",
-    "hakan-alzheimer-meddelande": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkZcPAAA=",
-    "m5-kokscenter-oscar-properties": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAAAAAEMAADKcBpiwgLVS4zTwdnFAhlvAABlkRGFAAA=",
-    "talent-christina": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAQF0J1hAADKcBpiwgLVS4zTwdnFAhlvAARCOFJ-AAA=",
-    "scalex-enkat1": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAASZKSDlAADKcBpiwgLVS4zTwdnFAhlvAASs0q9cAAA=",
-    "bolagsverket-forelaggande": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAAGdo6cMAADKcBpiwgLVS4zTwdnFAhlvAAQ78VNlAAA=",
-    "parkering-ogla": "AAMkAGM2M2YyM2M1LWY3ZDItNDg3My1iZTYzLWM4ZmZhY2Y1MDVkNABGAAAAAACrLlH_ZpNjQLTmH6xMw-RABwDKcBpiwgLVS4zTwdnFAhlvAABlfUszAADKcBpiwgLVS4zTwdnFAhlvAAT6xGRZAAA="
-  };
-
+  // --- localStorage state ---
   function getChecked() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -1580,7 +634,6 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  // Kolla om avbockad för mer än 7 dagar sedan
   function isExpired(val) {
     if (typeof val === 'number') {
       return (Date.now() - val) > 7 * 24 * 60 * 60 * 1000;
@@ -1588,25 +641,25 @@
     return false;
   }
 
-  // Show sync status on card
+  // --- Sync indicator ---
   function showSync(card, status) {
     let indicator = card.querySelector('.sync-indicator');
     if (!indicator) {
       indicator = document.createElement('span');
       indicator.className = 'sync-indicator';
-      card.querySelector('.card-meta').appendChild(indicator);
+      const meta = card.querySelector('.card-meta');
+      if (meta) meta.appendChild(indicator);
     }
     indicator.className = 'sync-indicator ' + status;
+    indicator.style.opacity = '1';
     if (status === 'syncing') indicator.textContent = 'Synkar...';
     else if (status === 'synced') indicator.textContent = 'Markerad som läst';
     else if (status === 'error') indicator.textContent = 'Kunde inte synka';
   }
 
-  // Mark email as read in Exchange
-  async function markAsReadInExchange(cardId, card) {
-    const messageId = EMAIL_IDS[cardId];
+  // --- Mark as read in Exchange ---
+  async function markAsReadInExchange(messageId, card) {
     if (!messageId) return;
-
     showSync(card, 'syncing');
     try {
       const resp = await fetch('/api/mark-read', {
@@ -1628,89 +681,7 @@
     }
   }
 
-  // Mejl som redan markerats som lästa i Exchange (verifierat via Graph API)
-  const PRE_CHECKED = [
-    "faktura-evolan-pharma",
-    "evolan-uk-ad-janine-draft",
-    "evolan-subtitles-janine",
-    "evolan-quote",
-    "evolan-kids-scripting",
-    "evolan-esim-banner",
-    "evolan-cleari-banners",
-    "evolan-visco-script-janine",
-    "evolan-visco-original",
-    "sparkcomm-quotes",
-    "rawnice-lead",
-    "adcreative",
-    "yobedoo-launch",
-    "yobedoo-aclarity",
-    "yobedoo-update",
-    "yobedoo-sharepoint",
-    "scalex-nda",
-    "scalex-ws4",
-    "beauty-week",
-    "advokat",
-    "faktura-samotsoh",
-    "wix-cancel",
-    "bilskada",
-    "bolagsverket-reg",
-    "convendum-signed",
-    "resume-biljetter",
-    "getty-images-past-due-balance",
-    "getty-images-statement-of-account",
-    "vangardlaw-forfallen-faktura",
-    "forsakringskassan-sgi-beslut",
-    "forsakringskassan-ansokan-mottagen",
-    "synoptik-betalningspaminnelse",
-    "wednesday-relations-kreditering",
-    "resurs-bank-ocr-info",
-    "if-forsakring-besked",
-    "better-globe-kundnummer",
-    "nils-friberg-vattenskada-rapport",
-    "bjorn-hermansson-faktura-tigerbalsam",
-    "linda-hansson-portfolio-samarbete",
-    "cocoon-marbella-aterkoppling",
-    "cappasity-samarbetsforfragan",
-    "oscar-properties-mote",
-    "lexter-live-streaming-fraga",
-    "adobe-dam-enterprise-kontakt",
-    "hakan-forhandsavtal-helix",
-    "polisen-parkeringsanmarkning-beslut",
-    "hakan-alzheimer-meddelande",
-    "m5-kokscenter-oscar-properties",
-    "talent-christina",
-    "scalex-enkat1",
-    "bolagsverket-forelaggande",
-    "parkering-ogla"
-  ];
-
-  // Migrera förbockade till localStorage om de saknas
-  const checked = getChecked();
-  let migrated = false;
-  for (const id of PRE_CHECKED) {
-    if (!checked[id]) {
-      checked[id] = Date.now();
-      migrated = true;
-    }
-  }
-  if (migrated) saveChecked(checked);
-
-  // Restore state on load — dölj kort som bockats av för >7 dagar sedan
-  document.querySelectorAll('.card').forEach(card => {
-    const id = card.dataset.id;
-    if (checked[id]) {
-      if (isExpired(checked[id])) {
-        card.style.display = 'none';
-        card.dataset.expired = 'true';
-      } else {
-        card.classList.add('checked');
-        const cb = card.querySelector('.checkbox');
-        if (cb) cb.classList.add('checked');
-      }
-    }
-  });
-
-  // Toggle check + mark as read
+  // --- Toggle check ---
   window.toggleCheck = function(el) {
     const card = el.closest('.card');
     const id = card.dataset.id;
@@ -1724,7 +695,6 @@
       el.classList.add('checked');
       card.classList.add('checked');
       checked[id] = Date.now();
-      // Mark as read in Exchange
       markAsReadInExchange(id, card);
     }
 
@@ -1732,40 +702,122 @@
     updateStats();
   };
 
-  // Update all stat boxes — avbockade räknas inte
+  // --- Build cards from API data ---
+  function renderEmails(emails) {
+    currentEmails = emails;
+    const container = document.getElementById('email-sections');
+    const checked = getChecked();
+
+    if (!emails || emails.length === 0) {
+      container.innerHTML = '<div class="empty-state">Inga olästa viktiga mejl just nu!</div>';
+      updateStats();
+      return;
+    }
+
+    // Gruppera per kategori
+    const categoryOrder = ['affar', 'yobedoo', 'scalex', 'ekonomi', 'bolag', 'ovrigt'];
+    const categoryStyles = {
+      affar: { bg: 'rgba(10,132,255,0.15)', color: 'var(--accent)', icon: '★' },
+      yobedoo: { bg: 'rgba(191,90,242,0.15)', color: 'var(--purple)', icon: '◆' },
+      scalex: { bg: 'rgba(48,209,88,0.15)', color: 'var(--green)', icon: '▲' },
+      ekonomi: { bg: 'rgba(255,69,58,0.15)', color: 'var(--red)', icon: '●' },
+      bolag: { bg: 'rgba(255,159,10,0.15)', color: 'var(--orange)', icon: '■' },
+      ovrigt: { bg: 'rgba(255,255,255,0.08)', color: 'var(--text-secondary)', icon: '◉' },
+    };
+
+    const groups = {};
+    for (const email of emails) {
+      const cat = email.category || 'ovrigt';
+      if (!groups[cat]) groups[cat] = { label: email.categoryLabel, emails: [] };
+      groups[cat].emails.push(email);
+    }
+
+    let html = '';
+
+    for (const cat of categoryOrder) {
+      if (!groups[cat]) continue;
+      const group = groups[cat];
+      const style = categoryStyles[cat] || categoryStyles.ovrigt;
+      const isAffar = cat === 'affar' ? ' data-category="affar"' : '';
+
+      html += `<div class="section" data-category="${cat}"${isAffar}>`;
+      html += `<div class="section-header">`;
+      html += `<div class="section-icon" style="background: ${style.bg}; color: ${style.color};">${style.icon}</div>`;
+      html += `<div class="section-title">${group.label}</div>`;
+      html += `<div class="section-count">${group.emails.length} mejl</div>`;
+      html += `</div>`;
+
+      for (const email of group.emails) {
+        const isChecked = checked[email.id];
+        const expired = isChecked && isExpired(isChecked);
+        const cardClass = expired ? 'display:none' : (isChecked ? '' : '');
+        const checkedClass = isChecked && !expired ? ' checked' : '';
+        const cbChecked = isChecked && !expired ? ' checked' : '';
+
+        html += `<div class="card${checkedClass}" data-id="${email.id}" data-priority="${email.priority}"${expired ? ' data-expired="true" style="display:none"' : ''}>`;
+        html += `<div class="card-top">`;
+        html += `<div class="checkbox${cbChecked}" onclick="toggleCheck(this)"></div>`;
+        html += `<div class="card-content">`;
+        html += `<div class="card-meta">`;
+        html += `<div class="priority-dot priority-${email.priority}"></div>`;
+        html += `<span class="card-date">${email.date}</span>`;
+        html += `<span class="card-from">${escapeHtml(email.from)}</span>`;
+        html += `</div>`;
+        html += `<div class="card-subject">${escapeHtml(email.subject)}</div>`;
+        if (email.preview) {
+          html += `<div class="card-preview">${escapeHtml(email.preview)}</div>`;
+        }
+        if (email.folder && email.folder !== 'Inkorg') {
+          html += `<div class="card-folder">${escapeHtml(email.folder)}</div>`;
+        }
+        html += `</div></div></div>`;
+      }
+
+      html += `</div>`;
+    }
+
+    container.innerHTML = html;
+    updateStats();
+
+    // Återställ filter om det var aktivt
+    if (currentFilter !== 'alla') {
+      const activeBtn = document.querySelector(`[data-filter="${currentFilter}"]`);
+      if (activeBtn) filterSections(activeBtn, currentFilter);
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // --- Update stats ---
   function updateStats() {
     const allCards = document.querySelectorAll('.card:not([data-expired="true"])');
     const activeCards = [...allCards].filter(c => !c.classList.contains('checked'));
     const remaining = activeCards.length;
 
-    // Alla viktiga = bara ej avbockade
-    const allaEl = document.querySelector('[data-filter="alla"] .stat-value');
-    if (allaEl) allaEl.textContent = remaining;
+    document.getElementById('stat-alla').textContent = remaining;
 
-    // Affär/Kund = ej avbockade i affär-sektioner
     const affarCards = [...document.querySelectorAll('[data-category="affar"] .card:not([data-expired="true"])')].filter(c => !c.classList.contains('checked'));
-    const affarEl = document.querySelector('[data-filter="affar"] .stat-value');
-    if (affarEl) affarEl.textContent = affarCards.length;
+    document.getElementById('stat-affar').textContent = affarCards.length;
 
-    // Hög prioritet = ej avbockade med priority-high
-    const hogCards = activeCards.filter(c => c.querySelector('.priority-high'));
-    const hogEl = document.getElementById('hog-count');
-    if (hogEl) hogEl.textContent = hogCards.length;
+    const hogCards = activeCards.filter(c => c.dataset.priority === 'high' || c.querySelector('.priority-high'));
+    document.getElementById('stat-hog').textContent = hogCards.length;
 
-    // Kvar att hantera = samma som alla aktiva
-    const kvarEl = document.getElementById('remaining-count');
-    if (kvarEl) kvarEl.textContent = remaining;
+    document.getElementById('stat-kvar').textContent = remaining;
   }
 
-  // --- FILTER: Clickable stat boxes ---
+  // --- Filter sections ---
   window.filterSections = function(el, filter) {
+    currentFilter = filter;
     document.querySelectorAll('.stat').forEach(s => s.classList.remove('active'));
     el.classList.add('active');
 
     const sections = document.querySelectorAll('.section');
 
     if (filter === 'alla') {
-      // Visa alla sektioner och kort (utom expired)
       sections.forEach(s => {
         s.classList.remove('hidden');
         s.querySelectorAll('.card').forEach(c => {
@@ -1773,7 +825,6 @@
         });
       });
     } else if (filter === 'affar') {
-      // Visa bara Affär/Kund-sektionen (utom expired)
       sections.forEach(s => {
         if (s.dataset.category === 'affar') {
           s.classList.remove('hidden');
@@ -1785,14 +836,13 @@
         }
       });
     } else if (filter === 'hog') {
-      // Visa bara kort med hög prioritet (utom expired)
       sections.forEach(s => {
         s.classList.remove('hidden');
         let visibleCards = 0;
         s.querySelectorAll('.card').forEach(c => {
           if (c.dataset.expired === 'true') {
             c.style.display = 'none';
-          } else if (c.querySelector('.priority-high')) {
+          } else if (c.dataset.priority === 'high' || c.querySelector('.priority-high')) {
             c.style.display = '';
             visibleCards++;
           } else {
@@ -1802,7 +852,6 @@
         if (visibleCards === 0) s.classList.add('hidden');
       });
     } else if (filter === 'kvar') {
-      // Visa bara obesvarade (ej ibockade, ej expired)
       sections.forEach(s => {
         s.classList.remove('hidden');
         let visibleCards = 0;
@@ -1819,13 +868,88 @@
     }
   };
 
-  updateStats();
+  // --- Fetch emails from API ---
+  async function fetchEmails() {
+    const btn = document.getElementById('refresh-btn');
+    btn.classList.add('loading');
+
+    try {
+      const resp = await fetch('/api/important-emails');
+      if (!resp.ok) throw new Error('API error ' + resp.status);
+      const data = await resp.json();
+
+      renderEmails(data.emails || []);
+
+      // Uppdatera "senast uppdaterad"
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
+      document.getElementById('last-updated').textContent =
+        `Senast uppdaterad: ${dateStr} kl ${timeStr}`;
+
+      // Footer stats
+      document.getElementById('footer-stats').textContent =
+        `${data.important} av ${data.total} olästa mejl klassades som viktiga. ${data.filtered} filtrerades bort (nyhetsbrev, notiser, skräp).`;
+
+      // Spara senaste hämtning
+      localStorage.setItem('inbox-last-fetch', JSON.stringify({
+        time: now.toISOString(),
+        emails: data.emails,
+        total: data.total,
+        filtered: data.filtered,
+        important: data.important,
+      }));
+
+    } catch (err) {
+      // Försök visa cachad data
+      const cached = getCachedEmails();
+      if (cached) {
+        renderEmails(cached.emails);
+        const cacheTime = new Date(cached.time);
+        document.getElementById('last-updated').textContent =
+          `Visar cachad data från ${cacheTime.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })} kl ${cacheTime.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })} (kunde inte hämta ny data)`;
+        document.getElementById('footer-stats').textContent =
+          `${cached.important} av ${cached.total} olästa mejl klassades som viktiga.`;
+      } else {
+        document.getElementById('email-sections').innerHTML =
+          `<div class="error-state">Kunde inte hämta mejl. Försök igen.<br><small>${err.message}</small></div>`;
+      }
+    }
+
+    btn.classList.remove('loading');
+  }
+
+  function getCachedEmails() {
+    try {
+      return JSON.parse(localStorage.getItem('inbox-last-fetch'));
+    } catch(e) {
+      return null;
+    }
+  }
+
+  window.refreshEmails = function() {
+    fetchEmails();
+  };
+
+  // --- Ladda mejl vid sidladdning ---
+  // Visa cachad data direkt, sedan hämta färsk data
+  const cached = getCachedEmails();
+  if (cached && cached.emails) {
+    renderEmails(cached.emails);
+    const cacheTime = new Date(cached.time);
+    document.getElementById('last-updated').textContent =
+      `Från ${cacheTime.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })} kl ${cacheTime.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })} — uppdaterar...`;
+    document.getElementById('footer-stats').textContent =
+      `${cached.important} av ${cached.total} olästa mejl klassades som viktiga.`;
+  }
+
+  // Hämta färsk data
+  fetchEmails();
 
   // --- KALENDER — 7 dagboxar ---
   (async function loadCalendar() {
     const container = document.getElementById('calendar-events');
 
-    // Local date key to avoid UTC timezone shift
     function localKey(d) {
       return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     }
@@ -1837,12 +961,10 @@
 
       const dayNamesShort = ['sön','mån','tis','ons','tor','fre','lör'];
 
-      // Build 7 days starting from today (local time)
       const today = new Date();
       today.setHours(0,0,0,0);
       const todayKey = localKey(today);
 
-      // Group events by local date key
       const eventsByDay = {};
       if (events) {
         for (const ev of events) {
