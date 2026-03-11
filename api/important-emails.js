@@ -76,13 +76,15 @@ const JUNK_SUBJECTS = [
 ];
 
 // Nyckelord som indikerar VIKTIGA mejl (bevaras alltid)
+// OBS: "important", "meeting" etc. borttagna — för breda, räddar Meta-notiser etc.
 const IMPORTANT_KEYWORDS = [
   'faktura', 'invoice', 'offert', 'quote', 'avtal', 'contract',
-  'deadline', 'brådskande', 'urgent', 'viktigt', 'important',
+  'deadline', 'brådskande', 'urgent',
   'evolan', 'yobedoo', 'scalex', 'bolagsverket', 'skatteverket',
   'kronofogden', 'försäkringskassan', 'advokat', 'juridik',
   'förfallen', 'past due', 'betalningspåminnelse', 'payment reminder',
-  'samarbete', 'cooperation', 'partnership', 'möte', 'meeting',
+  'samarbete', 'cooperation', 'partnership',
+  'convendum', 'domotion', 'sparkcomm',
 ];
 
 // Kategorisering baserat på avsändare/ämne
@@ -150,6 +152,10 @@ const ALWAYS_JUNK_DOMAINS = [
   'wasa-kredit', 'collector.se', 'resursbank',
   'connoisseurint', 'macrent.se',
   'bbmbonnier', 'red.bbmbonnier',
+  // Mer
+  'emiratesskyw', 'emirates.com', 'allianz',
+  'behrer.se', 'alexanderwhite',
+  'cc-butikerna', 'applebutiken', 'premiumpartner',
 ];
 
 // Kolla om mejlet ska filtreras bort
@@ -158,8 +164,8 @@ function isJunk(email) {
   const name = (email.from?.emailAddress?.name || '').toLowerCase();
   const subject = (email.subject || '').toLowerCase();
 
-  // ALLTID filtrera dessa — oavsett nyckelord
-  if (ALWAYS_JUNK_DOMAINS.some(d => from.includes(d))) {
+  // ALLTID filtrera dessa — oavsett nyckelord (kolla both from-adress och name)
+  if (ALWAYS_JUNK_DOMAINS.some(d => from.includes(d) || name.includes(d))) {
     return true;
   }
 
@@ -309,8 +315,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       emails: capped,
       total: allMessages.length,
-      filtered: skippedCount.junk + skippedCount.junkMail,
-      important: important.length,
+      filtered: allMessages.length - important.length,
+      important: capped.length,
       fetchedAt: new Date().toISOString(),
     });
   } catch (err) {
