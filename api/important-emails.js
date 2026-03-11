@@ -239,8 +239,11 @@ export default async function handler(req, res) {
       folderMap[f.id] = f.displayName;
     }
 
-    // Hämta olästa mejl — senaste 200, paginerat
-    const filter = encodeURIComponent("isRead eq false");
+    // Hämta olästa mejl — senaste 6 månader, paginerat
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const dateFilter = sixMonthsAgo.toISOString();
+    const filter = encodeURIComponent(`isRead eq false and receivedDateTime ge ${dateFilter}`);
     const select = 'id,subject,from,receivedDateTime,bodyPreview,importance,parentFolderId,isRead';
     let url = `https://graph.microsoft.com/v1.0/users/${USER_EMAIL}/messages?$filter=${filter}&$orderby=receivedDateTime desc&$top=100&$select=${select}`;
 
