@@ -9,7 +9,7 @@ const JUNK_DOMAINS = [
   'accounts.google', 'facebookmail', 'linkedin.com', 'twitter.com',
   'spotify.com', 'netflix.com', 'apple.com', 'microsoft.com',
   'github.com', 'vercel.com', 'supabase.io', 'heroku.com',
-  'mailchimp.com', 'sendinblue', 'hubspot', 'klaviyo',
+  'mailchimp.com', 'sendinblue', 'klaviyo',
   'shopify.com', 'squarespace.com', 'wordpress.com',
   'zoom.us', 'calendly.com', 'meetup.com',
   'paypal.com', 'stripe.com', 'klarna.com', 'swish',
@@ -112,8 +112,8 @@ function categorize(email) {
   if (all.includes('försäkringskassan') || all.includes('polisen') || all.includes('myndighet'))
     return { category: 'ovrigt', icon: '◉', label: 'Personligt / Myndigheter' };
 
-  // Default: affärskontakt eller övrigt
-  return { category: 'affar', icon: '★', label: 'Affär / Kund' };
+  // Default: övrigt
+  return { category: 'ovrigt', icon: '◉', label: 'Övrigt' };
 }
 
 // Prioritet: high, medium, low
