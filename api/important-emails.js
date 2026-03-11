@@ -156,6 +156,7 @@ const ALWAYS_JUNK_DOMAINS = [
   'emiratesskyw', 'emirates.com', 'allianz',
   'behrer.se', 'alexanderwhite',
   'cc-butikerna', 'applebutiken', 'premiumpartner',
+  'apple premium', 'c&c apple',
 ];
 
 // Kolla om mejlet ska filtreras bort
