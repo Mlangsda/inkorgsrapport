@@ -10,6 +10,7 @@ const JUNK_DOMAINS = [
   'spotify.com', 'netflix.com', 'apple.com', 'microsoft.com',
   'github.com', 'vercel.com', 'supabase.io', 'heroku.com',
   'mailchimp.com', 'sendinblue', 'klaviyo',
+  // OBS: hubspot INTE här — Marzena vill se HubSpot-mejl
   'shopify.com', 'squarespace.com', 'wordpress.com',
   'zoom.us', 'calendly.com', 'meetup.com',
   'paypal.com', 'stripe.com', 'klarna.com', 'swish',
@@ -85,6 +86,7 @@ const IMPORTANT_KEYWORDS = [
   'förfallen', 'past due', 'betalningspåminnelse', 'payment reminder',
   'samarbete', 'cooperation', 'partnership',
   'convendum', 'domotion', 'sparkcomm',
+  'hubspot',
 ];
 
 // Kategorisering baserat på avsändare/ämne
