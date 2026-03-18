@@ -674,20 +674,69 @@
 <script>
 (function() {
   const STORAGE_KEY = 'inbox-report-checked';
+  const SB_URL = 'https://dxixbtxywsvshthtiwgo.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4aXhidHh5d3N2c2h0aHRpd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjE1MzgsImV4cCI6MjA4ODIzNzUzOH0.87q-gad0BtcRcYHKpsKNqoJ8wTo-8jLPUizGomLboB4';
+  const APP_NAME = 'inkorgsrapport';
   let currentEmails = [];
   let currentFilter = 'alla';
+  let checkedCache = {};
 
-  // --- localStorage state ---
-  function getChecked() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    } catch(e) {
-      return {};
-    }
+  // --- Supabase REST helper ---
+  async function sbFetch(path, opts = {}) {
+    const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
+      ...opts,
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: opts.prefer || 'return=representation', ...opts.headers }
+    });
+    if (!res.ok) { console.error('Supabase error', res.status); return null; }
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
   }
 
-  function saveChecked(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  // --- Supabase checked state ---
+  async function loadCheckedFromSupabase() {
+    const rows = await sbFetch(`inbox_checked?app=eq.${APP_NAME}&select=email_id,checked_at`);
+    const result = {};
+    if (rows) rows.forEach(r => { result[r.email_id] = new Date(r.checked_at).getTime(); });
+    return result;
+  }
+
+  async function saveCheckToSupabase(emailId, timestamp) {
+    await sbFetch('inbox_checked', {
+      method: 'POST',
+      body: JSON.stringify({ app: APP_NAME, email_id: emailId, checked_at: new Date(timestamp).toISOString() }),
+      prefer: 'return=minimal',
+      headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }
+    });
+  }
+
+  async function removeCheckFromSupabase(emailId) {
+    await sbFetch(`inbox_checked?app=eq.${APP_NAME}&email_id=eq.${encodeURIComponent(emailId)}`, { method: 'DELETE', prefer: 'return=minimal' });
+  }
+
+  // --- Migrate localStorage → Supabase (runs once) ---
+  async function migrateLocalStorage() {
+    const MIGRATED_KEY = 'inbox-checked-migrated-' + APP_NAME;
+    if (localStorage.getItem(MIGRATED_KEY)) return;
+
+    let local = {};
+    try { local = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch {}
+    const keys = Object.keys(local);
+    if (keys.length > 0) {
+      console.log(`Migrerar ${keys.length} checkboxar från localStorage till Supabase...`);
+      for (const emailId of keys) {
+        await saveCheckToSupabase(emailId, local[emailId]);
+      }
+      console.log('Migration klar!');
+    }
+    localStorage.setItem(MIGRATED_KEY, new Date().toISOString());
+  }
+
+  function getChecked() {
+    return checkedCache;
+  }
+
+  async function saveChecked(data) {
+    checkedCache = data;
   }
 
   function isExpired(val) {
@@ -747,11 +796,13 @@
       el.classList.remove('checked');
       card.classList.remove('checked');
       delete checked[id];
+      removeCheckFromSupabase(id);
     } else {
       el.classList.add('checked');
       card.classList.add('checked');
       checked[id] = Date.now();
       markAsReadInExchange(id, card);
+      saveCheckToSupabase(id, checked[id]);
     }
 
     saveChecked(checked);
@@ -959,19 +1010,25 @@
   };
 
   // --- Ladda mejl vid sidladdning ---
-  // Visa cachad data direkt, sedan hämta färsk data
-  const cached = getCachedEmails();
-  if (cached && cached.emails) {
-    renderEmails(cached.emails);
-    const cacheTime = new Date(cached.time);
-    document.getElementById('last-updated').textContent =
-      `Från ${cacheTime.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })} kl ${cacheTime.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })} — uppdaterar...`;
-    document.getElementById('footer-stats').textContent =
-      `${cached.important} av ${cached.total} olästa mejl klassades som viktiga.`;
-  }
+  // 1. Migrera localStorage → Supabase (engångs)
+  // 2. Ladda checked state från Supabase
+  // 3. Visa cachad mejldata, sedan hämta färsk
+  (async function initInbox() {
+    await migrateLocalStorage();
+    checkedCache = await loadCheckedFromSupabase();
 
-  // Hämta färsk data
-  fetchEmails();
+    const cached = getCachedEmails();
+    if (cached && cached.emails) {
+      renderEmails(cached.emails);
+      const cacheTime = new Date(cached.time);
+      document.getElementById('last-updated').textContent =
+        `Från ${cacheTime.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })} kl ${cacheTime.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })} — uppdaterar...`;
+      document.getElementById('footer-stats').textContent =
+        `${cached.important} av ${cached.total} olästa mejl klassades som viktiga.`;
+    }
+
+    fetchEmails();
+  })();
 
   // --- KALENDER — 7 dagboxar ---
   (async function loadCalendar() {
