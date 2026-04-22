@@ -272,10 +272,21 @@ export default async function handler(req, res) {
     for (const msg of allMessages) {
       const folderName = folderMap[msg.parentFolderId] || '';
 
-      // Skippa mejl i skräppost/borttaget
-      if (['Skräppost', 'Junk Email', 'Borttaget', 'Deleted Items', 'Drafts', 'Utkast', 'Sent Items', 'Skickat'].some(f =>
-        folderName.toLowerCase().includes(f.toLowerCase())
-      )) {
+      // Skippa mejl i skräppost/borttaget/skickat/utkast
+      // OBS: svensk Outlook använder "Borttagna objekt" (inte "Borttaget") — använd "borttag" som substring
+      const fn = folderName.toLowerCase();
+      const EXCLUDED_FOLDER_SUBSTRINGS = [
+        'borttag',          // Borttagna objekt, Borttaget
+        'deleted',          // Deleted Items
+        'skräppost', 'skrappost', 'junk', 'spam',
+        'utkast', 'drafts',
+        'skickat', 'sent',
+        'utkorg', 'outbox',
+        'arkiv', 'archive',
+        'konversationshistorik',
+        'schemalagt',       // Scheduled
+      ];
+      if (EXCLUDED_FOLDER_SUBSTRINGS.some(f => fn.includes(f))) {
         skippedCount.junkMail++;
         continue;
       }
