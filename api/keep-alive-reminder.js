@@ -1,7 +1,10 @@
 import { ConfidentialClientApplication } from '@azure/msal-node';
 
 const USER_EMAIL = 'marzena@marzenalangsdale.com';
-const TARGET_DATE = '2026-08-07';
+// Påminner den 7:e varje månad (första gången 2026-08-07) så länge cronen är igång,
+// så Marzena aktivt får ta ställning till om Supabase keep-alive ska fortsätta.
+const REMINDER_DAY = '07';
+const FIRST_REMINDER = '2026-08-07';
 
 function stockholmDateString() {
   return new Intl.DateTimeFormat('sv-SE', {
@@ -15,8 +18,8 @@ function stockholmDateString() {
 export default async function handler(req, res) {
   const today = stockholmDateString();
 
-  if (today !== TARGET_DATE) {
-    return res.status(200).json({ skipped: true, today, targetDate: TARGET_DATE });
+  if (today < FIRST_REMINDER || !today.endsWith(`-${REMINDER_DAY}`)) {
+    return res.status(200).json({ skipped: true, today, remindsOn: `den ${REMINDER_DAY}:e varje månad fr.o.m. ${FIRST_REMINDER}` });
   }
 
   try {
@@ -42,13 +45,14 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           message: {
-            subject: 'Supabase keep-alive — dags att stänga av?',
+            subject: 'Supabase keep-alive — ska den fortsätta?',
             body: {
               contentType: 'HTML',
               content:
                 '<p>Hej Marzena,</p>' +
-                '<p>Nu har det gått ca 4 veckor sedan jag satte upp en keep-alive-routine som pingar Supabase var 5:e dag, så att projektet inte pausas av inaktivitet medan du var på semester.</p>' +
-                '<p>Är du tillbaka nu? Säg till mig i Claude Code om routinen ska stängas av, eller om du vill att den fortsätter ett tag till.</p>' +
+                '<p>Månadspåminnelse: en Vercel-cron i ideas-dashboard pingar Supabase varje morgon (skriv-anrop mot tabellen _keep_alive) så att projektet inte pausas av inaktivitet på free-tier.</p>' +
+                '<p>Vill du att den fortsätter? Den är gratis och harmlös, så standardvalet är att låta den rulla. Om du vill stänga av den, eller uppgradera Supabase till Pro istället, säg till mig i Claude Code.</p>' +
+                '<p>Du får den här påminnelsen den 7:e varje månad tills du ber mig ta bort den.</p>' +
                 '<p>/ Claude</p>',
             },
             toRecipients: [{ emailAddress: { address: USER_EMAIL } }],
