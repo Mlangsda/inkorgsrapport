@@ -14,6 +14,7 @@
     }
   ],
   "crons": [
-    { "path": "/api/keep-alive-reminder", "schedule": "0 6 * * *" }
+    { "path": "/api/keep-alive-reminder", "schedule": "0 6 * * *" },
+    { "path": "/api/keep-alive-watchdog", "schedule": "49 5 * * *" }
   ]
 }
