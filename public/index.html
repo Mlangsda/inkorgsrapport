@@ -677,7 +677,6 @@
   const SB_URL = 'https://dxixbtxywsvshthtiwgo.supabase.co';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4aXhidHh5d3N2c2h0aHRpd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjE1MzgsImV4cCI6MjA4ODIzNzUzOH0.87q-gad0BtcRcYHKpsKNqoJ8wTo-8jLPUizGomLboB4';
   const APP_NAME = 'inkorgsrapport';
-  let currentEmails = [];
   let currentFilter = 'alla';
   let checkedCache = {};
 
@@ -719,7 +718,7 @@
     if (localStorage.getItem(MIGRATED_KEY)) return;
 
     let local = {};
-    try { local = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch {}
+    try { local = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { /* trasig localStorage ignoreras */ }
     const keys = Object.keys(local);
     if (keys.length > 0) {
       console.log(`Migrerar ${keys.length} checkboxar från localStorage till Supabase...`);
@@ -781,7 +780,7 @@
       } else {
         showSync(card, 'error');
       }
-    } catch (err) {
+    } catch {
       showSync(card, 'error');
     }
   }
@@ -811,7 +810,6 @@
 
   // --- Build cards from API data ---
   function renderEmails(emails) {
-    currentEmails = emails;
     const container = document.getElementById('email-sections');
     const checked = getChecked();
 
@@ -855,7 +853,6 @@
       for (const email of group.emails) {
         const isChecked = checked[email.id];
         const expired = isChecked && isExpired(isChecked);
-        const cardClass = expired ? 'display:none' : (isChecked ? '' : '');
         const checkedClass = isChecked && !expired ? ' checked' : '';
         const cbChecked = isChecked && !expired ? ' checked' : '';
 
@@ -1000,7 +997,7 @@
   function getCachedEmails() {
     try {
       return JSON.parse(localStorage.getItem('inbox-last-fetch'));
-    } catch(e) {
+    } catch {
       return null;
     }
   }
@@ -1090,7 +1087,7 @@
       }
 
       container.innerHTML = html;
-    } catch (err) {
+    } catch {
       container.innerHTML = '<div class="calendar-error">Kunde inte ladda kalendern</div>';
     }
   })();
